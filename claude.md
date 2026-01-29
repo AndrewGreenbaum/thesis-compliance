@@ -4,15 +4,21 @@ Automated thesis/dissertation compliance checker that analyzes PDF documents aga
 
 ## Tech Stack
 
+### Backend (Python)
 - **Language:** Python 3.11+
 - **PDF Processing:** PyMuPDF (fitz) >=1.23.0, pdfplumber >=0.10.0
 - **CLI:** Typer >=0.9.0 with Rich >=13.0.0 for terminal output
 - **Data Validation:** Pydantic >=2.0.0
 - **Configuration:** PyYAML >=6.0
-- **API (optional):** FastAPI >=0.109.0, Uvicorn >=0.27.0
+- **API:** FastAPI >=0.109.0, Uvicorn >=0.27.0
 - **Testing:** pytest >=7.0.0, pytest-cov >=4.0.0
 - **Linting:** Ruff (line-length: 100), MyPy (strict mode)
 - **Build:** Hatchling
+
+### Frontend (web/)
+- **Framework:** Next.js 16 + React 19
+- **Styling:** Tailwind CSS
+- **Language:** TypeScript
 
 ## Architecture & Data Flow
 
@@ -29,11 +35,22 @@ MarginExt  FontExt   SpacingExt  PageNumExt
          ComplianceReport → Reporter (console/json)
 ```
 
-**Key Modules:**
+**Backend Modules:**
 - `src/thesis_compliance/extractor/` - PDF data extraction (pdf.py, margins.py, fonts.py, spacing.py, pages.py)
 - `src/thesis_compliance/checker/` - Compliance logic (engine.py, evaluators.py, violations.py)
 - `src/thesis_compliance/spec/` - YAML spec loading and rule models (loader.py, rules.py, builtin/*.yaml)
 - `src/thesis_compliance/reporter/` - Output formatting (console.py, json.py)
+- `src/thesis_compliance/api.py` - FastAPI server with `/check`, `/specs` endpoints
+
+**Frontend (web/):**
+- `src/app/` - Next.js app router pages
+- `src/components/` - React components (FileUpload, UniversitySelect, ComplianceReport)
+- `src/lib/types.ts` - TypeScript types matching Python API responses
+
+**API Endpoints:**
+- `GET /specs` - List available university specs
+- `GET /specs/{name}` - Get spec details
+- `POST /check` - Upload PDF and check compliance (multipart form: file + spec name)
 
 ## Coding Standards
 
@@ -141,3 +158,30 @@ def check(self, pages: str | list[int] | None = None) -> ComplianceReport:
 - Test fixtures in `tests/fixtures/` (valid_thesis.pdf, bad_margins.pdf, etc.)
 - Use pytest with coverage
 - Test both success and error paths
+
+## Running the Project
+
+**Backend:**
+```bash
+uvicorn thesis_compliance.api:app --reload
+# Runs on http://localhost:8000
+```
+
+**Frontend:**
+```bash
+cd web && npm run dev
+# Runs on http://localhost:3000
+```
+
+**CLI:**
+```bash
+thesis-check path/to/thesis.pdf --spec rackham
+```
+
+## Competitive Advantage
+
+Unlike LLMs (ChatGPT, Gemini, etc.), this tool:
+- **Deterministic:** Measures actual PDF margins to 0.01" precision
+- **Rule-based:** Codified university specs with exact tolerances
+- **Rendered output:** Catches font substitution and spacing issues in final PDF
+- **Actionable:** Page-specific violations with expected vs. found values
