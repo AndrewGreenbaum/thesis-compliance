@@ -45,6 +45,7 @@ class PDFDocument:
         """Ensure PDF document is closed on garbage collection."""
         if hasattr(self, "_doc") and self._doc is not None:
             try:
+                self.clear_cache()
                 # Check if document is still open before closing
                 if not self._doc.is_closed:
                     self._doc.close()
@@ -109,26 +110,25 @@ class PDFDocument:
 
     def iter_pages(self) -> Iterator[PageInfo]:
         """Iterate over all pages."""
-        for i in range(len(self._doc)):
-            page = self._doc[i]
-            rect = page.rect
-            yield PageInfo.from_points(i + 1, rect.width, rect.height)
+        for i in range(1, self.page_count + 1):
+            yield self.get_page_info(i)
 
     def get_text_blocks(self, page_num: int) -> list[TextBlock]:
         """Extract text blocks from a page with position and font info.
 
         Results are cached for performance - subsequent calls for the same
-        page return cached data.
+        page return cached data. Returns a defensive copy to prevent
+        cache corruption by callers.
 
         Args:
             page_num: 1-indexed page number.
 
         Returns:
-            List of TextBlock objects.
+            List of TextBlock objects (defensive copy).
         """
-        # Check cache first
+        # Check cache first - return defensive copy to prevent corruption
         if page_num in self._text_blocks_cache:
-            return self._text_blocks_cache[page_num]
+            return list(self._text_blocks_cache[page_num])
 
         page = self._doc[page_num - 1]
         blocks: list[TextBlock] = []
@@ -184,9 +184,9 @@ class PDFDocument:
                         )
                     )
 
-        # Cache and return
+        # Cache and return defensive copy
         self._text_blocks_cache[page_num] = blocks
-        return blocks
+        return list(blocks)
 
     def get_content_bbox(self, page_num: int) -> BoundingBox | None:
         """Get the bounding box of all content on a page.

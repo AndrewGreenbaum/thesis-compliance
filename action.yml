@@ -67,25 +67,26 @@ runs:
       run: |
         set +e  # Don't exit on error
 
-        ARGS="${{ inputs.pdf-path }} --spec ${{ inputs.spec }} --format json"
+        # Build arguments as array to prevent shell injection
+        ARGS=("${{ inputs.pdf-path }}" --spec "${{ inputs.spec }}" --format json)
 
         if [ -n "${{ inputs.pages }}" ]; then
-          ARGS="$ARGS --pages ${{ inputs.pages }}"
+          ARGS+=(--pages "${{ inputs.pages }}")
         fi
 
         if [ "${{ inputs.strict }}" = "true" ]; then
-          ARGS="$ARGS --strict"
+          ARGS+=(--strict)
         fi
 
-        echo "Running: thesis-check $ARGS"
-        thesis-check $ARGS > /tmp/thesis-results.json 2>&1
+        echo "Running: thesis-check ${ARGS[*]}"
+        thesis-check "${ARGS[@]}" > "$RUNNER_TEMP/thesis-results.json" 2>&1
         EXIT_CODE=$?
 
         # Parse JSON results
-        if [ -f /tmp/thesis-results.json ]; then
-          ERRORS=$(python -c "import json; data=json.load(open('/tmp/thesis-results.json')); print(data.get('error_count', 0))" 2>/dev/null || echo "0")
-          WARNINGS=$(python -c "import json; data=json.load(open('/tmp/thesis-results.json')); print(data.get('warning_count', 0))" 2>/dev/null || echo "0")
-          PASSED=$(python -c "import json; data=json.load(open('/tmp/thesis-results.json')); print('true' if data.get('passed', False) else 'false')" 2>/dev/null || echo "false")
+        if [ -f "$RUNNER_TEMP/thesis-results.json" ]; then
+          ERRORS=$(python -c "import json; data=json.load(open('$RUNNER_TEMP/thesis-results.json')); print(data.get('error_count', 0))" 2>/dev/null || echo "0")
+          WARNINGS=$(python -c "import json; data=json.load(open('$RUNNER_TEMP/thesis-results.json')); print(data.get('warning_count', 0))" 2>/dev/null || echo "0")
+          PASSED=$(python -c "import json; data=json.load(open('$RUNNER_TEMP/thesis-results.json')); print('true' if data.get('passed', False) else 'false')" 2>/dev/null || echo "false")
         else
           ERRORS=0
           WARNINGS=0
@@ -96,8 +97,9 @@ runs:
         echo "warnings=$WARNINGS" >> $GITHUB_OUTPUT
         echo "passed=$PASSED" >> $GITHUB_OUTPUT
 
-        # Display results in console format too
-        thesis-check ${{ inputs.pdf-path }} --spec ${{ inputs.spec }} --format ${{ inputs.format }} || true
+        # Display results in console format too - use array for proper quoting
+        DISPLAY_ARGS=("${{ inputs.pdf-path }}" --spec "${{ inputs.spec }}" --format "${{ inputs.format }}")
+        thesis-check "${DISPLAY_ARGS[@]}" || true
 
         # Exit with appropriate code
         if [ "$ERRORS" -gt 0 ]; then
