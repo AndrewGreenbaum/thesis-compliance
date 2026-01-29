@@ -1,0 +1,73 @@
+# Massachusetts Institute of Technology
+# Thesis Specifications and Format Guidelines
+# https://libraries.mit.edu/distinctive-collections/thesis-specs/
+
+name: mit
+university: Massachusetts Institute of Technology
+description: MIT thesis specifications and formatting requirements
+version: "2024"
+url: https://libraries.mit.edu/distinctive-collections/thesis-specs/
+
+# Margin requirements
+# MIT requires 1" margins on all sides minimum
+# 1.5" left margin recommended for binding
+margins:
+  left: 1.5
+  right: 1.0
+  top: 1.0
+  bottom: 1.0
+  tolerance: 0.05
+
+# Title page margins
+additional_margins:
+  - applies_to: title_page
+    left: 1.5
+    right: 1.0
+    top: 2.0
+    bottom: 1.0
+    tolerance: 0.1
+
+# Font requirements
+# 11 point minimum, standard readable font
+fonts:
+  allowed_fonts:
+    - Times
+    - Times New Roman
+    - Times-Roman
+    - TimesNewRoman
+    - Arial
+    - Helvetica
+    - Computer Modern
+    - CMR
+    - LMRoman
+    - TeXGyreTermes
+    - Palatino
+    - Georgia
+  body_size: 12.0
+  size_tolerance: 1.0  # More tolerant (11-13pt acceptable)
+  min_size: 11.0
+
+# Line spacing
+# 1.5 or double spacing for body text
+spacing:
+  required_ratio: 2.0
+  tolerance: 0.3  # More tolerant to allow 1.5 spacing
+  applies_to: body
+
+# Page numbers
+page_numbers:
+  front_matter:
+    style: roman
+    position: bottom
+    alignment: center
+  body:
+    style: arabic
+    position: bottom
+    alignment: center
+    starts_at: 1
+
+# Title page requirements
+title_page:
+  top_margin: 2.0
+  margin_tolerance: 0.15
+  has_page_number: false

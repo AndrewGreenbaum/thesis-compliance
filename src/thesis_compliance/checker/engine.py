@@ -142,6 +142,9 @@ class ThesisChecker:
         # Parse pages
         page_list = self._normalize_pages(pages)
 
+        # Pre-load pages to warm cache for all extractors
+        self.doc.preload_pages(page_list)
+
         # Run all evaluations
         violations = self.evaluator.evaluate_all(page_list)
 

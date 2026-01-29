@@ -30,6 +30,11 @@ class PDFDocument:
         except Exception as e:
             raise ValueError(f"Failed to open PDF: {e}") from e
 
+        # Cache for text blocks to avoid repeated extraction
+        self._text_blocks_cache: dict[int, list[TextBlock]] = {}
+        # Cache for page info
+        self._page_info_cache: dict[int, PageInfo] = {}
+
     def __enter__(self) -> "PDFDocument":
         return self
 
@@ -48,8 +53,31 @@ class PDFDocument:
 
     def close(self) -> None:
         """Close the PDF document."""
+        self.clear_cache()
         if self._doc:
             self._doc.close()
+
+    def clear_cache(self) -> None:
+        """Clear all cached data."""
+        self._text_blocks_cache.clear()
+        self._page_info_cache.clear()
+
+    def preload_pages(self, pages: list[int] | None = None) -> None:
+        """Pre-load and cache text blocks for specified pages.
+
+        This can improve performance when multiple extractors will
+        process the same pages.
+
+        Args:
+            pages: List of 1-indexed page numbers, or None for all pages.
+        """
+        if pages is None:
+            pages = list(range(1, self.page_count + 1))
+
+        for page_num in pages:
+            # This will cache the results
+            self.get_text_blocks(page_num)
+            self.get_page_info(page_num)
 
     @property
     def page_count(self) -> int:
@@ -59,15 +87,25 @@ class PDFDocument:
     def get_page_info(self, page_num: int) -> PageInfo:
         """Get information about a specific page (1-indexed).
 
+        Results are cached for performance.
+
         Args:
             page_num: 1-indexed page number.
 
         Returns:
             PageInfo with dimensions.
         """
+        # Check cache first
+        if page_num in self._page_info_cache:
+            return self._page_info_cache[page_num]
+
         page = self._doc[page_num - 1]  # fitz uses 0-indexing
         rect = page.rect
-        return PageInfo.from_points(page_num, rect.width, rect.height)
+        info = PageInfo.from_points(page_num, rect.width, rect.height)
+
+        # Cache and return
+        self._page_info_cache[page_num] = info
+        return info
 
     def iter_pages(self) -> Iterator[PageInfo]:
         """Iterate over all pages."""
@@ -79,12 +117,19 @@ class PDFDocument:
     def get_text_blocks(self, page_num: int) -> list[TextBlock]:
         """Extract text blocks from a page with position and font info.
 
+        Results are cached for performance - subsequent calls for the same
+        page return cached data.
+
         Args:
             page_num: 1-indexed page number.
 
         Returns:
             List of TextBlock objects.
         """
+        # Check cache first
+        if page_num in self._text_blocks_cache:
+            return self._text_blocks_cache[page_num]
+
         page = self._doc[page_num - 1]
         blocks: list[TextBlock] = []
 
@@ -139,6 +184,8 @@ class PDFDocument:
                         )
                     )
 
+        # Cache and return
+        self._text_blocks_cache[page_num] = blocks
         return blocks
 
     def get_content_bbox(self, page_num: int) -> BoundingBox | None:

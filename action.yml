@@ -1,0 +1,117 @@
+# GitHub Action for thesis compliance checking
+#
+# Usage in your workflow:
+#
+# - uses: AndrewGreenbaum/thesis-compliance@v1
+#   with:
+#     pdf-path: thesis.pdf
+#     spec: rackham
+
+name: 'Thesis Compliance Check'
+description: 'Check thesis PDF formatting against university style requirements'
+author: 'Andrew Greenbaum'
+
+branding:
+  icon: 'check-circle'
+  color: 'green'
+
+inputs:
+  pdf-path:
+    description: 'Path to the thesis PDF file'
+    required: true
+  spec:
+    description: 'Style specification (rackham, stanford, mit, cornell, harvard, chicago, unc, rice)'
+    required: false
+    default: 'rackham'
+  pages:
+    description: 'Page range to check (e.g., "1-10,20")'
+    required: false
+    default: ''
+  strict:
+    description: 'Fail on warnings as well as errors'
+    required: false
+    default: 'false'
+  format:
+    description: 'Output format (console, json, brief)'
+    required: false
+    default: 'console'
+
+outputs:
+  passed:
+    description: 'Whether the thesis passed compliance checks'
+    value: ${{ steps.check.outputs.passed }}
+  errors:
+    description: 'Number of errors found'
+    value: ${{ steps.check.outputs.errors }}
+  warnings:
+    description: 'Number of warnings found'
+    value: ${{ steps.check.outputs.warnings }}
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
+
+    - name: Install thesis-compliance
+      shell: bash
+      run: |
+        python -m pip install --upgrade pip
+        pip install thesis-compliance
+
+    - name: Run thesis check
+      id: check
+      shell: bash
+      run: |
+        set +e  # Don't exit on error
+
+        ARGS="${{ inputs.pdf-path }} --spec ${{ inputs.spec }} --format json"
+
+        if [ -n "${{ inputs.pages }}" ]; then
+          ARGS="$ARGS --pages ${{ inputs.pages }}"
+        fi
+
+        if [ "${{ inputs.strict }}" = "true" ]; then
+          ARGS="$ARGS --strict"
+        fi
+
+        echo "Running: thesis-check $ARGS"
+        thesis-check $ARGS > /tmp/thesis-results.json 2>&1
+        EXIT_CODE=$?
+
+        # Parse JSON results
+        if [ -f /tmp/thesis-results.json ]; then
+          ERRORS=$(python -c "import json; data=json.load(open('/tmp/thesis-results.json')); print(data.get('error_count', 0))" 2>/dev/null || echo "0")
+          WARNINGS=$(python -c "import json; data=json.load(open('/tmp/thesis-results.json')); print(data.get('warning_count', 0))" 2>/dev/null || echo "0")
+          PASSED=$(python -c "import json; data=json.load(open('/tmp/thesis-results.json')); print('true' if data.get('passed', False) else 'false')" 2>/dev/null || echo "false")
+        else
+          ERRORS=0
+          WARNINGS=0
+          PASSED="false"
+        fi
+
+        echo "errors=$ERRORS" >> $GITHUB_OUTPUT
+        echo "warnings=$WARNINGS" >> $GITHUB_OUTPUT
+        echo "passed=$PASSED" >> $GITHUB_OUTPUT
+
+        # Display results in console format too
+        thesis-check ${{ inputs.pdf-path }} --spec ${{ inputs.spec }} --format ${{ inputs.format }} || true
+
+        # Exit with appropriate code
+        if [ "$ERRORS" -gt 0 ]; then
+          echo ""
+          echo "::error::Thesis has $ERRORS formatting error(s)"
+          exit 1
+        fi
+
+        if [ "${{ inputs.strict }}" = "true" ] && [ "$WARNINGS" -gt 0 ]; then
+          echo ""
+          echo "::warning::Thesis has $WARNINGS formatting warning(s) (strict mode)"
+          exit 1
+        fi
+
+        echo ""
+        echo "::notice::Thesis formatting check passed!"
+        exit 0

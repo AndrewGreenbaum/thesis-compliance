@@ -22,6 +22,9 @@ class RuleType(str, Enum):
     SPACING = "spacing"
     PAGE_NUMBER = "page_number"
     TITLE_PAGE = "title_page"
+    HEADING = "heading"
+    CAPTION = "caption"
+    BIBLIOGRAPHY = "bibliography"
 
 
 @dataclass

@@ -1,0 +1,72 @@
+# Cornell University
+# Graduate School Thesis/Dissertation Format Guidelines
+# https://gradschool.cornell.edu/academic-progress/thesis-dissertation/
+
+name: cornell
+university: Cornell University
+description: Cornell Graduate School thesis and dissertation formatting requirements
+version: "2024"
+url: https://gradschool.cornell.edu/academic-progress/thesis-dissertation/
+
+# Margin requirements
+# Left margin 1.5" for binding; all others 1"
+margins:
+  left: 1.5
+  right: 1.0
+  top: 1.0
+  bottom: 1.0
+  tolerance: 0.05
+
+# Title page margins
+additional_margins:
+  - applies_to: title_page
+    left: 1.5
+    right: 1.0
+    top: 2.0
+    bottom: 1.0
+    tolerance: 0.1
+
+# Font requirements
+# 10-12 point, standard readable font
+fonts:
+  allowed_fonts:
+    - Times
+    - Times New Roman
+    - Times-Roman
+    - TimesNewRoman
+    - Arial
+    - Helvetica
+    - Palatino
+    - Georgia
+    - Cambria
+    - CMR
+    - LMRoman
+    - TeXGyreTermes
+  body_size: 12.0
+  size_tolerance: 0.5
+  min_size: 10.0
+
+# Line spacing
+# Double-spaced for body text
+spacing:
+  required_ratio: 2.0
+  tolerance: 0.2
+  applies_to: body
+
+# Page numbers
+page_numbers:
+  front_matter:
+    style: roman
+    position: bottom
+    alignment: center
+  body:
+    style: arabic
+    position: bottom
+    alignment: center
+    starts_at: 1
+
+# Title page requirements
+title_page:
+  top_margin: 2.0
+  margin_tolerance: 0.1
+  has_page_number: false

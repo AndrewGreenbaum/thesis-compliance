@@ -79,6 +79,71 @@ class TitlePageRule:
 
 
 @dataclass
+class HeadingRule:
+    """Chapter and section heading requirements."""
+
+    # Chapter heading (level 1) requirements
+    chapter_font_size: float = 14.0  # points
+    chapter_bold: bool = True
+    chapter_all_caps: bool = True
+
+    # Section heading (level 2) requirements
+    section_font_size: float = 12.0  # points
+    section_bold: bool = True
+
+    # Subsection heading (level 3) requirements
+    subsection_font_size: float = 12.0  # points
+    subsection_bold: bool = False
+    subsection_italic: bool = True
+
+    # Spacing before headings
+    space_before_chapter: float = 2.0  # inches from top of page
+    space_before_section: float = 24.0  # points
+    space_before_subsection: float = 12.0  # points
+
+    # Size tolerance
+    size_tolerance: float = 0.5  # points
+
+
+@dataclass
+class CaptionRule:
+    """Figure and table caption requirements."""
+
+    # Caption font size
+    font_size: float = 10.0  # points (often smaller than body)
+    size_tolerance: float = 0.5  # points
+
+    # Caption positioning
+    figure_position: Literal["above", "below"] = "below"
+    table_position: Literal["above", "below"] = "above"
+
+    # Label format
+    figure_label: str = "Figure"  # e.g., "Figure 1:" or "Fig. 1."
+    table_label: str = "Table"
+
+    # Numbering style
+    numbering: Literal["continuous", "by_chapter"] = "continuous"
+
+
+@dataclass
+class BibliographyRule:
+    """Bibliography/references requirements."""
+
+    # Hanging indent for entries
+    hanging_indent: float = 0.5  # inches
+    indent_tolerance: float = 0.1  # inches
+
+    # Line spacing within entries
+    entry_spacing: float = 1.0  # single-spaced within entries
+    between_entries: float = 2.0  # double-spaced between entries
+    spacing_tolerance: float = 0.2
+
+    # Font requirements (often same as body, but can differ)
+    font_size: float = 12.0  # points
+    size_tolerance: float = 0.5  # points
+
+
+@dataclass
 class StyleSpec:
     """Complete style specification for a thesis format."""
 
