@@ -1,0 +1,59 @@
+# UNC Chapel Hill Graduate School
+# Thesis and Dissertation Format Guidelines
+# https://gradschool.unc.edu/academics/thesis-diss/guide/
+
+name: unc
+university: University of North Carolina at Chapel Hill
+description: UNC Graduate School thesis/dissertation formatting requirements
+version: "2024"
+url: https://gradschool.unc.edu/academics/thesis-diss/guide/
+
+margins:
+  left: 1.5
+  right: 1.0
+  top: 1.0
+  bottom: 1.0
+  tolerance: 0.05
+
+additional_margins:
+  - applies_to: title_page
+    left: 1.5
+    right: 1.0
+    top: 2.0
+    bottom: 1.0
+    tolerance: 0.1
+
+fonts:
+  allowed_fonts:
+    - Times
+    - Times New Roman
+    - Times-Roman
+    - Arial
+    - Helvetica
+    - Courier
+    - CMR
+    - LMRoman
+  body_size: 12.0
+  size_tolerance: 0.5
+  min_size: 10.0
+
+spacing:
+  required_ratio: 2.0
+  tolerance: 0.2
+  applies_to: body
+
+page_numbers:
+  front_matter:
+    style: roman
+    position: bottom
+    alignment: center
+  body:
+    style: arabic
+    position: bottom
+    alignment: center
+    starts_at: 1
+
+title_page:
+  top_margin: 2.0
+  margin_tolerance: 0.1
+  has_page_number: false

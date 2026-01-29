@@ -1,0 +1,72 @@
+# University of Michigan Rackham Graduate School
+# Dissertation Format Guidelines
+# https://rackham.umich.edu/navigating-your-degree/dissertation/formatting-guidelines/
+
+name: rackham
+university: University of Michigan
+description: Rackham Graduate School dissertation formatting requirements
+version: "2024"
+url: https://rackham.umich.edu/navigating-your-degree/dissertation/formatting-guidelines/
+
+# Margin requirements
+# Left margin is 1.5" for binding; all others are 1"
+margins:
+  left: 1.5
+  right: 1.0
+  top: 1.0
+  bottom: 1.0
+  tolerance: 0.05
+
+# Title page has larger top margin
+additional_margins:
+  - applies_to: title_page
+    left: 1.5
+    right: 1.0
+    top: 2.0
+    bottom: 1.0
+    tolerance: 0.1
+
+# Font requirements
+# 12-point Times New Roman or similar
+fonts:
+  allowed_fonts:
+    - Times
+    - Times New Roman
+    - Times-Roman
+    - TimesNewRoman
+    - Arial
+    - Helvetica
+    - Georgia
+    - Cambria
+    # LaTeX fonts
+    - CMR  # Computer Modern Roman
+    - LMRoman  # Latin Modern
+    - TeXGyreTermes
+  body_size: 12.0
+  size_tolerance: 0.5
+  min_size: 10.0
+
+# Line spacing
+# Double-spaced throughout body text
+spacing:
+  required_ratio: 2.0
+  tolerance: 0.2
+  applies_to: body
+
+# Page numbers
+page_numbers:
+  front_matter:
+    style: roman  # lowercase roman numerals (i, ii, iii...)
+    position: bottom
+    alignment: center
+  body:
+    style: arabic
+    position: bottom
+    alignment: center
+    starts_at: 1  # Body text starts at page 1
+
+# Title page requirements
+title_page:
+  top_margin: 2.0
+  margin_tolerance: 0.1
+  has_page_number: false
