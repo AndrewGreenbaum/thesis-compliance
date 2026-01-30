@@ -161,6 +161,11 @@ class StyleSpec:
     page_numbers: PageNumberRule = field(default_factory=PageNumberRule)
     title_page: TitlePageRule = field(default_factory=TitlePageRule)
 
+    # Optional extended rules
+    headings: HeadingRule | None = None
+    captions: CaptionRule | None = None
+    bibliography: BibliographyRule | None = None
+
     # Additional margin rules (e.g., different margins for title page)
     additional_margins: list[MarginRule] = field(default_factory=list)
 
@@ -184,6 +189,18 @@ class StyleSpec:
 
         # Title page rules
         count += 2
+
+        # Heading rules (if present)
+        if self.headings is not None:
+            count += 6  # chapter, section, subsection font/style
+
+        # Caption rules (if present)
+        if self.captions is not None:
+            count += 3  # font size, position, numbering
+
+        # Bibliography rules (if present)
+        if self.bibliography is not None:
+            count += 3  # hanging indent, spacing, font size
 
         return count
 

@@ -6,7 +6,10 @@ from typing import Any
 import yaml
 
 from thesis_compliance.spec.rules import (
+    BibliographyRule,
+    CaptionRule,
     FontRule,
+    HeadingRule,
     MarginRule,
     PageNumberRule,
     SpacingRule,
@@ -193,6 +196,53 @@ class SpecLoader:
             has_page_number=title_page_data.get("has_page_number", False),
         )
 
+        # Parse headings (optional)
+        headings: HeadingRule | None = None
+        if "headings" in data:
+            hd = data["headings"]
+            headings = HeadingRule(
+                chapter_font_size=hd.get("chapter_font_size", 14.0),
+                chapter_bold=hd.get("chapter_bold", True),
+                chapter_all_caps=hd.get("chapter_all_caps", True),
+                section_font_size=hd.get("section_font_size", 12.0),
+                section_bold=hd.get("section_bold", True),
+                subsection_font_size=hd.get("subsection_font_size", 12.0),
+                subsection_bold=hd.get("subsection_bold", False),
+                subsection_italic=hd.get("subsection_italic", True),
+                space_before_chapter=hd.get("space_before_chapter", 2.0),
+                space_before_section=hd.get("space_before_section", 24.0),
+                space_before_subsection=hd.get("space_before_subsection", 12.0),
+                size_tolerance=hd.get("size_tolerance", 0.5),
+            )
+
+        # Parse captions (optional)
+        captions: CaptionRule | None = None
+        if "captions" in data:
+            cd = data["captions"]
+            captions = CaptionRule(
+                font_size=cd.get("font_size", 10.0),
+                size_tolerance=cd.get("size_tolerance", 0.5),
+                figure_position=cd.get("figure_position", "below"),
+                table_position=cd.get("table_position", "above"),
+                figure_label=cd.get("figure_label", "Figure"),
+                table_label=cd.get("table_label", "Table"),
+                numbering=cd.get("numbering", "continuous"),
+            )
+
+        # Parse bibliography (optional)
+        bibliography: BibliographyRule | None = None
+        if "bibliography" in data:
+            bd = data["bibliography"]
+            bibliography = BibliographyRule(
+                hanging_indent=bd.get("hanging_indent", 0.5),
+                indent_tolerance=bd.get("indent_tolerance", 0.1),
+                entry_spacing=bd.get("entry_spacing", 1.0),
+                between_entries=bd.get("between_entries", 2.0),
+                spacing_tolerance=bd.get("spacing_tolerance", 0.2),
+                font_size=bd.get("font_size", 12.0),
+                size_tolerance=bd.get("size_tolerance", 0.5),
+            )
+
         return StyleSpec(
             name=data.get("name", default_name),
             university=data.get("university", "Unknown University"),
@@ -204,6 +254,9 @@ class SpecLoader:
             spacing=spacing,
             page_numbers=page_numbers,
             title_page=title_page,
+            headings=headings,
+            captions=captions,
+            bibliography=bibliography,
             additional_margins=additional_margins,
         )
 

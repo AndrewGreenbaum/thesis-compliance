@@ -4,7 +4,7 @@ import ipaddress
 import os
 import tempfile
 from pathlib import Path
-from typing import Annotated
+from typing import Annotated, Any
 from urllib.parse import urlparse
 
 from fastapi import FastAPI, File, Form, HTTPException, UploadFile
@@ -13,7 +13,6 @@ from pydantic import BaseModel
 
 from thesis_compliance import __version__
 from thesis_compliance.checker.engine import ThesisChecker
-from thesis_compliance.models import ComplianceReport
 from thesis_compliance.spec import SpecLoader
 
 app = FastAPI(
@@ -52,7 +51,7 @@ class CheckResponse(BaseModel):
     passed: bool
     error_count: int
     warning_count: int
-    violations: list[dict]
+    violations: list[dict[str, Any]]
 
 
 class HealthResponse(BaseModel):
