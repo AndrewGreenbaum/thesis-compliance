@@ -3,7 +3,7 @@
 from pathlib import Path
 
 from thesis_compliance.extractor import PDFDocument
-from thesis_compliance.models import ComplianceReport, Violation
+from thesis_compliance.models import ComplianceReport
 from thesis_compliance.spec import SpecLoader, StyleSpec
 
 from .evaluators import RuleEvaluator
@@ -36,13 +36,9 @@ def parse_page_range(page_spec: str, max_pages: int) -> list[int]:
             start_num = int(start.strip())
             end_num = int(end.strip())
             if start_num > end_num:
-                raise ValueError(
-                    f"Invalid page range: {start_num}-{end_num} (start > end)"
-                )
+                raise ValueError(f"Invalid page range: {start_num}-{end_num} (start > end)")
             if start_num < 1 or end_num > max_pages:
-                raise ValueError(
-                    f"Page range {start_num}-{end_num} out of bounds (1-{max_pages})"
-                )
+                raise ValueError(f"Page range {start_num}-{end_num} out of bounds (1-{max_pages})")
             pages.update(range(start_num, end_num + 1))
         else:
             page_num = int(part)

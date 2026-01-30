@@ -1,7 +1,7 @@
 """PyMuPDF wrapper for PDF document access."""
 
+from collections.abc import Iterator
 from pathlib import Path
-from typing import Iterator
 
 import fitz  # PyMuPDF
 
@@ -235,4 +235,5 @@ class PDFDocument:
             Plain text content.
         """
         page = self._doc[page_num - 1]
-        return page.get_text()
+        result: str = page.get_text()
+        return result

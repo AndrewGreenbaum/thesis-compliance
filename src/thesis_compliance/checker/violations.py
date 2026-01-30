@@ -92,7 +92,8 @@ class ViolationBuilder:
             severity=Severity.ERROR,
             message=f"Body font '{font_name}' is not an approved font",
             page=page,
-            expected=f"One of: {', '.join(allowed_fonts[:3])}{'...' if len(allowed_fonts) > 3 else ''}",
+            expected=f"One of: {', '.join(allowed_fonts[:3])}"
+            + ("..." if len(allowed_fonts) > 3 else ""),
             found=font_name,
             suggestion=f"Use {allowed_fonts[0]} for body text",
         )
@@ -254,4 +255,284 @@ class ViolationBuilder:
             expected=expected,
             found=found,
             suggestion=suggestion,
+        )
+
+    @staticmethod
+    def heading_font_size_violation(
+        page: int,
+        heading_level: int,
+        heading_text: str,
+        expected_size: float,
+        found_size: float,
+    ) -> Violation:
+        """Create a heading font size violation.
+
+        Args:
+            page: Page number where violation occurred.
+            heading_level: Heading level (1=chapter, 2=section, 3=subsection).
+            heading_text: The heading text (truncated for display).
+            expected_size: Expected font size in points.
+            found_size: Actual font size in points.
+
+        Returns:
+            Violation object.
+        """
+        level_names = {1: "Chapter", 2: "Section", 3: "Subsection"}
+        level_name = level_names.get(heading_level, "Heading")
+        truncated = heading_text[:40] + "..." if len(heading_text) > 40 else heading_text
+
+        return Violation(
+            rule_id=f"heading.level{heading_level}.font_size",
+            rule_type=RuleType.HEADING,
+            severity=Severity.ERROR,
+            message=f"{level_name} heading must use {expected_size:.0f}pt font",
+            page=page,
+            expected=f"{expected_size:.0f}pt",
+            found=f"{found_size:.1f}pt",
+            suggestion=f'Change "{truncated}" to {expected_size:.0f}pt',
+        )
+
+    @staticmethod
+    def heading_style_violation(
+        page: int,
+        heading_level: int,
+        heading_text: str,
+        missing_style: str,
+    ) -> Violation:
+        """Create a heading style violation (bold, italic, caps).
+
+        Args:
+            page: Page number where violation occurred.
+            heading_level: Heading level (1=chapter, 2=section, 3=subsection).
+            heading_text: The heading text (truncated for display).
+            missing_style: The style that's missing (e.g., "bold", "ALL CAPS").
+
+        Returns:
+            Violation object.
+        """
+        level_names = {1: "Chapter", 2: "Section", 3: "Subsection"}
+        level_name = level_names.get(heading_level, "Heading")
+        truncated = heading_text[:40] + "..." if len(heading_text) > 40 else heading_text
+
+        return Violation(
+            rule_id=f"heading.level{heading_level}.style",
+            rule_type=RuleType.HEADING,
+            severity=Severity.ERROR,
+            message=f"{level_name} headings must be {missing_style}",
+            page=page,
+            expected=missing_style,
+            found="missing",
+            suggestion=f'Apply {missing_style} formatting to "{truncated}"',
+        )
+
+    @staticmethod
+    def caption_font_size_violation(
+        page: int,
+        caption_type: str,
+        caption_number: str,
+        expected_size: float,
+        found_size: float,
+    ) -> Violation:
+        """Create a caption font size violation.
+
+        Args:
+            page: Page number where violation occurred.
+            caption_type: Type of caption ("figure" or "table").
+            caption_number: The caption number (e.g., "1", "2.1").
+            expected_size: Expected font size in points.
+            found_size: Actual font size in points.
+
+        Returns:
+            Violation object.
+        """
+        return Violation(
+            rule_id=f"caption.{caption_type}.font_size",
+            rule_type=RuleType.CAPTION,
+            severity=Severity.WARNING,
+            message=f"{caption_type.title()} captions must use {expected_size:.0f}pt font",
+            page=page,
+            expected=f"{expected_size:.0f}pt",
+            found=f"{found_size:.1f}pt",
+            suggestion=f"Change {caption_type.title()} {caption_number} caption "
+            f"to {expected_size:.0f}pt",
+        )
+
+    @staticmethod
+    def caption_label_violation(
+        page: int,
+        caption_type: str,
+        expected_label: str,
+        found_label: str,
+    ) -> Violation:
+        """Create a caption label format violation.
+
+        Args:
+            page: Page number where violation occurred.
+            caption_type: Type of caption ("figure" or "table").
+            expected_label: Expected label format (e.g., "Figure").
+            found_label: Actual label found.
+
+        Returns:
+            Violation object.
+        """
+        return Violation(
+            rule_id=f"caption.{caption_type}.label",
+            rule_type=RuleType.CAPTION,
+            severity=Severity.WARNING,
+            message=f"{caption_type.title()} captions should use '{expected_label}' label",
+            page=page,
+            expected=expected_label,
+            found=found_label,
+            suggestion=f"Change '{found_label}' to '{expected_label}'",
+        )
+
+    @staticmethod
+    def caption_numbering_violation(
+        caption_type: str,
+        expected_style: str,
+        found_style: str,
+    ) -> Violation:
+        """Create a caption numbering style violation.
+
+        Args:
+            caption_type: Type of caption ("figure" or "table").
+            expected_style: Expected numbering style ("continuous" or "by_chapter").
+            found_style: Actual numbering style.
+
+        Returns:
+            Violation object.
+        """
+        style_desc = {
+            "continuous": "1, 2, 3...",
+            "by_chapter": "1.1, 1.2, 2.1...",
+        }
+
+        return Violation(
+            rule_id=f"caption.{caption_type}.numbering",
+            rule_type=RuleType.CAPTION,
+            severity=Severity.WARNING,
+            message=f"{caption_type.title()} numbering should be {expected_style}",
+            page=None,
+            expected=f"{expected_style} ({style_desc.get(expected_style, '')})",
+            found=found_style,
+            suggestion=f"Renumber {caption_type}s using {expected_style} numbering",
+        )
+
+    @staticmethod
+    def caption_sequence_violation(
+        page: int,
+        caption_type: str,
+        issue: str,
+    ) -> Violation:
+        """Create a caption sequence/ordering violation.
+
+        Args:
+            page: Page number where violation occurred.
+            caption_type: Type of caption ("figure" or "table").
+            issue: Description of the sequence issue.
+
+        Returns:
+            Violation object.
+        """
+        return Violation(
+            rule_id=f"caption.{caption_type}.sequence",
+            rule_type=RuleType.CAPTION,
+            severity=Severity.WARNING,
+            message=issue,
+            page=page,
+            suggestion=f"Check {caption_type} numbering sequence",
+        )
+
+    @staticmethod
+    def bibliography_indent_violation(
+        page: int,
+        expected_indent: float,
+        found_indent: float,
+    ) -> Violation:
+        """Create a bibliography hanging indent violation.
+
+        Args:
+            page: Page number (start of bibliography).
+            expected_indent: Expected hanging indent in inches.
+            found_indent: Actual hanging indent in inches.
+
+        Returns:
+            Violation object.
+        """
+        diff_pts = (expected_indent - found_indent) * 72
+
+        return Violation(
+            rule_id="bibliography.hanging_indent",
+            rule_type=RuleType.BIBLIOGRAPHY,
+            severity=Severity.ERROR,
+            message=f'Bibliography entries must have {expected_indent:.2f}" hanging indent',
+            page=page,
+            expected=f'{expected_indent:.2f}"',
+            found=f'{found_indent:.2f}"',
+            suggestion=f"Adjust hanging indent by {diff_pts:.0f}pt",
+        )
+
+    @staticmethod
+    def bibliography_font_size_violation(
+        page: int,
+        expected_size: float,
+        found_size: float,
+    ) -> Violation:
+        """Create a bibliography font size violation.
+
+        Args:
+            page: Page number where violation occurred.
+            expected_size: Expected font size in points.
+            found_size: Actual font size in points.
+
+        Returns:
+            Violation object.
+        """
+        return Violation(
+            rule_id="bibliography.font_size",
+            rule_type=RuleType.BIBLIOGRAPHY,
+            severity=Severity.ERROR,
+            message=f"Bibliography must use {expected_size:.0f}pt font",
+            page=page,
+            expected=f"{expected_size:.0f}pt",
+            found=f"{found_size:.1f}pt",
+            suggestion=f"Change bibliography font to {expected_size:.0f}pt",
+        )
+
+    @staticmethod
+    def bibliography_spacing_violation(
+        page: int,
+        spacing_type: str,
+        expected_ratio: float,
+        found_ratio: float,
+    ) -> Violation:
+        """Create a bibliography spacing violation.
+
+        Args:
+            page: Page number (start of bibliography).
+            spacing_type: Type of spacing ("within_entry" or "between_entries").
+            expected_ratio: Expected spacing ratio.
+            found_ratio: Actual spacing ratio.
+
+        Returns:
+            Violation object.
+        """
+        spacing_names = {
+            1.0: "single-spaced",
+            1.5: "1.5-spaced",
+            2.0: "double-spaced",
+        }
+        expected_name = spacing_names.get(expected_ratio, f"{expected_ratio}x spaced")
+
+        type_desc = "within entries" if spacing_type == "within_entry" else "between entries"
+
+        return Violation(
+            rule_id=f"bibliography.spacing.{spacing_type}",
+            rule_type=RuleType.BIBLIOGRAPHY,
+            severity=Severity.WARNING,
+            message=f"Bibliography {type_desc} should be {expected_name}",
+            page=page,
+            expected=f"{expected_ratio:.1f}x",
+            found=f"{found_ratio:.1f}x",
+            suggestion=f"Adjust bibliography spacing {type_desc}",
         )

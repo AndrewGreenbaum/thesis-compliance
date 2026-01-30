@@ -63,18 +63,14 @@ class ConsoleReporter:
         warnings = report.warnings
 
         if errors:
-            self.console.print(
-                Text(f"Errors: {len(errors)}", style="bold red")
-            )
+            self.console.print(Text(f"Errors: {len(errors)}", style="bold red"))
             self.console.print()
 
             for violation in errors:
                 self._print_violation(violation)
 
         if warnings:
-            self.console.print(
-                Text(f"Warnings: {len(warnings)}", style="bold yellow")
-            )
+            self.console.print(Text(f"Warnings: {len(warnings)}", style="bold yellow"))
             self.console.print()
 
             for violation in warnings:
@@ -100,9 +96,7 @@ class ConsoleReporter:
             style = "blue"
 
         # Main message
-        self.console.print(
-            f"  [{style}]{icon}[/{style}] {location}: {violation.message}"
-        )
+        self.console.print(f"  [{style}]{icon}[/{style}] {location}: {violation.message}")
 
         # Expected vs found
         if violation.expected is not None:
@@ -133,17 +127,11 @@ class ConsoleReporter:
         """Print summary section."""
         if report.passed:
             if report.warnings:
-                status = Text(
-                    f"Passed with {len(report.warnings)} warning(s)",
-                    style="yellow"
-                )
+                status = Text(f"Passed with {len(report.warnings)} warning(s)", style="yellow")
             else:
                 status = Text("Passed", style="bold green")
         else:
-            status = Text(
-                f"Failed - {len(report.errors)} error(s)",
-                style="bold red"
-            )
+            status = Text(f"Failed - {len(report.errors)} error(s)", style="bold red")
 
         self.console.print("─" * 50)
         self.console.print(f"Status: {status}")
@@ -162,11 +150,8 @@ class ConsoleReporter:
                     f"Passed with {len(report.warnings)} warning(s)"
                 )
             else:
-                self.console.print(
-                    f"[green]✓[/green] {report.pdf_path.name}: Passed"
-                )
+                self.console.print(f"[green]✓[/green] {report.pdf_path.name}: Passed")
         else:
             self.console.print(
-                f"[red]✗[/red] {report.pdf_path.name}: "
-                f"Failed ({len(report.errors)} error(s))"
+                f"[red]✗[/red] {report.pdf_path.name}: Failed ({len(report.errors)} error(s))"
             )

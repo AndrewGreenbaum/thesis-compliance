@@ -11,7 +11,10 @@ A tool that detects formatting deviations in thesis PDFs by analyzing the actual
 - **Line spacing** - Detect double-spacing violations
 - **Page numbers** - Validate Roman numerals for front matter, Arabic for body
 - **Title page** - Verify 2" top margin requirement
-- **Multiple university specs** - Rackham (UMich), UNC, Rice, and more
+- **Heading formatting** - Check chapter/section heading sizes, bold, and capitalization
+- **Figure/table captions** - Validate caption font size, labels, and numbering sequence
+- **Bibliography** - Check hanging indents, font size, and entry spacing
+- **Multiple university specs** - Rackham (UMich), UNC, Rice, Stanford, MIT, and more
 
 ## Installation
 
@@ -128,6 +131,11 @@ Status: Failed - 2 error(s)
 | `rackham` | University of Michigan | Default, strictest |
 | `unc` | UNC Chapel Hill | |
 | `rice` | Rice University | |
+| `stanford` | Stanford University | |
+| `mit` | MIT | |
+| `cornell` | Cornell University | |
+| `harvard` | Harvard University | |
+| `chicago` | University of Chicago | |
 
 ## Custom Specifications
 

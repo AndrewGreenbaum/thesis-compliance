@@ -129,9 +129,7 @@ class SpacingExtractor:
 
         return spacings
 
-    def analyze_spacing(
-        self, pages: list[int] | None = None
-    ) -> SpacingAnalysis | None:
+    def analyze_spacing(self, pages: list[int] | None = None) -> SpacingAnalysis | None:
         """Analyze line spacing across pages.
 
         Args:
@@ -203,9 +201,7 @@ class SpacingExtractor:
 
         return len(violations) == 0, violations
 
-    def detect_spacing_type(
-        self, pages: list[int] | None = None
-    ) -> str:
+    def detect_spacing_type(self, pages: list[int] | None = None) -> str:
         """Detect the predominant spacing type.
 
         Args:

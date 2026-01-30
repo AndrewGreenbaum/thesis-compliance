@@ -4,7 +4,7 @@ from collections import Counter
 from dataclasses import dataclass
 
 from thesis_compliance.extractor.pdf import PDFDocument
-from thesis_compliance.models import FontInfo, TextBlock
+from thesis_compliance.models import FontInfo
 
 
 @dataclass

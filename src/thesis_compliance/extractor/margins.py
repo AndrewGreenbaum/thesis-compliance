@@ -1,7 +1,7 @@
 """Margin extraction from PDF content bounding boxes."""
 
 from thesis_compliance.extractor.pdf import PDFDocument
-from thesis_compliance.models import Margins, PageInfo
+from thesis_compliance.models import Margins
 
 
 class MarginExtractor:
@@ -45,9 +45,7 @@ class MarginExtractor:
             bottom=max(0, page_info.height_inches - content_inches.y1),
         )
 
-    def get_all_margins(
-        self, pages: list[int] | None = None
-    ) -> dict[int, Margins]:
+    def get_all_margins(self, pages: list[int] | None = None) -> dict[int, Margins]:
         """Get margins for multiple pages.
 
         Args:
@@ -67,9 +65,7 @@ class MarginExtractor:
 
         return result
 
-    def get_minimum_margins(
-        self, pages: list[int] | None = None
-    ) -> Margins | None:
+    def get_minimum_margins(self, pages: list[int] | None = None) -> Margins | None:
         """Get the minimum margins across all specified pages.
 
         This is useful for checking if any page violates margin requirements.

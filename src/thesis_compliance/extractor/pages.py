@@ -158,7 +158,6 @@ class PageNumberExtractor:
         unnumbered: list[int] = []
         issues: list[str] = []
 
-        last_style: str | None = None
         seen_arabic = False
 
         for page_num in range(1, self.doc.page_count + 1):
@@ -178,8 +177,6 @@ class PageNumberExtractor:
             else:
                 body.append(page_num)
                 seen_arabic = True
-
-            last_style = page_number.style
 
         # Determine numbering style
         if not front_matter and not body:
@@ -224,9 +221,7 @@ class PageNumberExtractor:
 
         if require_roman_front_matter and analysis.numbering_style not in ["standard", "none"]:
             if not analysis.front_matter_pages and analysis.body_pages:
-                issues.append(
-                    "Front matter should use Roman numerals before body page numbers"
-                )
+                issues.append("Front matter should use Roman numerals before body page numbers")
 
         if require_centered:
             for page_num in range(1, self.doc.page_count + 1):

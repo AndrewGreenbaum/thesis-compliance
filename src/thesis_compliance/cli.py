@@ -1,9 +1,8 @@
 """Thesis compliance CLI using Typer."""
 
-import sys
 from enum import Enum
 from pathlib import Path
-from typing import Annotated, Optional
+from typing import Annotated
 
 import typer
 from rich.console import Console
@@ -50,23 +49,26 @@ def check(
         ),
     ],
     spec: Annotated[
-        Optional[str],
+        str | None,
         typer.Option(
-            "--spec", "-s",
+            "--spec",
+            "-s",
             help="Style specification (built-in name or path to YAML file)",
         ),
     ] = None,
     pages: Annotated[
-        Optional[str],
+        str | None,
         typer.Option(
-            "--pages", "-p",
+            "--pages",
+            "-p",
             help="Page range to check (e.g., '1-10', '1,5,10', '1-10,20')",
         ),
     ] = None,
     output_format: Annotated[
         OutputFormat,
         typer.Option(
-            "--format", "-f",
+            "--format",
+            "-f",
             help="Output format",
         ),
     ] = OutputFormat.CONSOLE,
@@ -105,14 +107,14 @@ def check(
 
         # Output report
         if output_format == OutputFormat.JSON:
-            reporter = JSONReporter(pretty=json_pretty)
-            reporter.print_report(report)
+            json_reporter = JSONReporter(pretty=json_pretty)
+            json_reporter.print_report(report)
         elif output_format == OutputFormat.BRIEF:
-            reporter = ConsoleReporter(console)
-            reporter.print_brief(report)
+            console_reporter = ConsoleReporter(console)
+            console_reporter.print_brief(report)
         else:
-            reporter = ConsoleReporter(console)
-            reporter.print_report(report)
+            console_reporter = ConsoleReporter(console)
+            console_reporter.print_report(report)
 
         # Determine exit code
         if not report.passed:
@@ -173,7 +175,11 @@ def info(
 ) -> None:
     """Show information about a thesis PDF without checking compliance."""
     try:
-        from thesis_compliance.extractor import PDFDocument, FontExtractor, SpacingExtractor
+        from thesis_compliance.extractor import (
+            FontExtractor,
+            PDFDocument,
+            SpacingExtractor,
+        )
 
         with PDFDocument(pdf_path) as doc:
             console.print(f"[bold]File:[/bold] {pdf_path.name}")
@@ -182,7 +188,10 @@ def info(
 
             # Page dimensions
             page_info = doc.get_page_info(1)
-            console.print(f"[bold]Page size:[/bold] {page_info.width_inches:.2f}\" × {page_info.height_inches:.2f}\"")
+            console.print(
+                f"[bold]Page size:[/bold] "
+                f'{page_info.width_inches:.2f}" × {page_info.height_inches:.2f}"'
+            )
             console.print()
 
             # Fonts
