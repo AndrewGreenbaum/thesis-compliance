@@ -62,28 +62,31 @@ jobs:
       - name: Check thesis formatting
         id: check
         run: |
-          ARGS="${{ inputs.pdf-path }} --spec ${{ inputs.spec }} --format json"
+          # Build arguments as array to prevent shell injection
+          ARGS=("${{ inputs.pdf-path }}" --spec "${{ inputs.spec }}" --format json)
 
           if [ -n "${{ inputs.pages }}" ]; then
-            ARGS="$ARGS --pages ${{ inputs.pages }}"
+            ARGS+=(--pages "${{ inputs.pages }}")
           fi
 
           if [ "${{ inputs.strict }}" = "true" ]; then
-            ARGS="$ARGS --strict"
+            ARGS+=(--strict)
           fi
 
-          echo "Running: thesis-check $ARGS"
-          thesis-check $ARGS > results.json || true
+          echo "Running: thesis-check ${ARGS[*]}"
+          thesis-check "${ARGS[@]}" > results.json || true
 
           # Parse results
           cat results.json
 
-          # Check for errors
-          ERRORS=$(python -c "import json; data=json.load(open('results.json')); print(data.get('error_count', 0))")
-          WARNINGS=$(python -c "import json; data=json.load(open('results.json')); print(data.get('warning_count', 0))")
+          # Check for errors with JSON error handling
+          ERRORS=$(python -c "import json; data=json.load(open('results.json')); print(data.get('error_count', 0))" 2>/dev/null || echo "0")
+          WARNINGS=$(python -c "import json; data=json.load(open('results.json')); print(data.get('warning_count', 0))" 2>/dev/null || echo "0")
+          PASSED=$(python -c "import json; data=json.load(open('results.json')); print('true' if data.get('passed', False) else 'false')" 2>/dev/null || echo "false")
 
           echo "errors=$ERRORS" >> $GITHUB_OUTPUT
           echo "warnings=$WARNINGS" >> $GITHUB_OUTPUT
+          echo "passed=$PASSED" >> $GITHUB_OUTPUT
 
           if [ "$ERRORS" -gt 0 ]; then
             echo "::error::Thesis has $ERRORS formatting error(s)"

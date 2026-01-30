@@ -178,6 +178,7 @@ class ThesisChecker:
             ComplianceReport with margin violations only.
         """
         page_list = self._normalize_pages(pages)
+        self.doc.preload_pages(page_list)
 
         violations = self.evaluator.evaluate_title_page()
         violations.extend(self.evaluator.evaluate_margins(page_list))
@@ -203,6 +204,7 @@ class ThesisChecker:
             ComplianceReport with font violations only.
         """
         page_list = self._normalize_pages(pages)
+        self.doc.preload_pages(page_list)
 
         violations = self.evaluator.evaluate_fonts(page_list)
 
@@ -227,6 +229,7 @@ class ThesisChecker:
             ComplianceReport with spacing violations only.
         """
         page_list = self._normalize_pages(pages)
+        self.doc.preload_pages(page_list)
 
         violations = self.evaluator.evaluate_spacing(page_list)
 
