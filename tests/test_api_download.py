@@ -1,6 +1,7 @@
 """Offline regression tests for PDF limits, safe connections, and cleanup."""
 
 import asyncio
+import http.client
 import io
 import socket
 from unittest.mock import Mock
@@ -177,6 +178,43 @@ def test_read_timeout_closes_connection(tmp_path, connections):
     with pytest.raises(download.DownloadError):
         download.download_pdf("https://example.com/paper.pdf", tmp_path / "paper.pdf")
     assert created[0].closed
+
+
+def test_early_eof_with_declared_length_is_rejected(tmp_path, connections):
+    created, responses = connections
+    sock = Mock()
+    sock.makefile.return_value = io.BytesIO(
+        b"HTTP/1.1 200 OK\r\nContent-Length: 100\r\nConnection: close\r\n\r\n%PDF-short"
+    )
+    response = http.client.HTTPResponse(sock)
+    response.begin()
+    responses.append(response)
+    with pytest.raises(download.DownloadError, match="declared length"):
+        download.download_pdf("https://example.com/paper.pdf", tmp_path / "paper.pdf")
+    assert created[0].closed
+
+
+def test_complete_declared_length_is_accepted(tmp_path, connections):
+    _, responses = connections
+    body = b"%PDF-example"
+    responses.append(Response(body=body, headers={"Content-Length": str(len(body))}))
+    output = tmp_path / "paper.pdf"
+    download.download_pdf("https://example.com/paper.pdf", output)
+    assert output.read_bytes() == body
+
+
+def test_spec_metadata_cannot_read_local_yaml(monkeypatch, tmp_path):
+    (tmp_path / "private-test.yaml").write_text(
+        "name: internal-test\nuniversity: synthetic-private-metadata\n"
+        "description: should-not-be-listed\n"
+    )
+    monkeypatch.chdir(tmp_path)
+    client = TestClient(api.app)
+    for name in ["private-test.yaml", "private-test"]:
+        response = client.get(f"/specs/{name}")
+        assert response.status_code == 404
+        assert "synthetic-private-metadata" not in response.text
+    assert client.get("/specs/rackham").status_code == 200
 
 
 def test_pinned_tls_uses_checked_ip_and_original_hostname(monkeypatch):

@@ -134,6 +134,7 @@ def download_pdf(url: str, destination: Path, *, max_bytes: int = MAX_PDF_BYTES)
                 if response.status != 200:
                     raise DownloadError(f"PDF server returned HTTP {response.status}")
                 length = response.getheader("Content-Length")
+                declared_size = None
                 if length is not None:
                     try:
                         declared_size = int(length)
@@ -158,6 +159,8 @@ def download_pdf(url: str, destination: Path, *, max_bytes: int = MAX_PDF_BYTES)
                         if total > max_bytes:
                             raise PDFTooLargeError("PDF exceeds the size limit")
                         output.write(chunk)
+                if declared_size is not None and total != declared_size:
+                    raise DownloadError("PDF response ended before its declared length")
                 return
             finally:
                 connection.close()
