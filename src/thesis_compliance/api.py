@@ -1,19 +1,30 @@
 """FastAPI server for thesis compliance checking."""
 
-import ipaddress
+import logging
 import os
 import tempfile
 from pathlib import Path
 from typing import Annotated, Any
-from urllib.parse import urlparse
+from urllib.parse import unquote, urlsplit
 
 from fastapi import FastAPI, File, Form, HTTPException, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
+from starlette.concurrency import run_in_threadpool
 
 from thesis_compliance import __version__
 from thesis_compliance.checker.engine import ThesisChecker
-from thesis_compliance.spec import SpecLoader
+from thesis_compliance.download import (
+    CHUNK_BYTES,
+    MAX_PDF_BYTES,
+    DownloadError,
+    PDFTooLargeError,
+    download_pdf,
+    validate_url,
+)
+from thesis_compliance.spec import SpecLoader, StyleSpec
+
+logger = logging.getLogger(__name__)
 
 app = FastAPI(
     title="Thesis Compliance API",
@@ -104,182 +115,104 @@ async def get_spec(name: str) -> SpecInfo:
         raise HTTPException(status_code=404, detail=f"Spec not found: {name}")
 
 
+def _load_spec(name: str) -> StyleSpec:
+    available = SpecLoader.list_builtin_specs()
+    if name not in available:
+        raise HTTPException(
+            status_code=400,
+            detail=f"Unknown spec: {name}. Available: {', '.join(available)}",
+        )
+    return SpecLoader.load(name)
+
+
+def _check_pdf(path: Path, style_spec: StyleSpec, pages: str | None, name: str) -> CheckResponse:
+    try:
+        checker = ThesisChecker(path, style_spec)
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail="File is not a readable PDF") from exc
+    with checker:
+        try:
+            report = checker.check(pages)
+        except ValueError as exc:
+            raise HTTPException(status_code=400, detail=str(exc)) from exc
+    return CheckResponse(
+        pdf_name=name,
+        spec_name=report.spec_name,
+        pages_checked=report.pages_checked,
+        rules_checked=report.rules_checked,
+        passed=report.passed,
+        error_count=len(report.errors),
+        warning_count=len(report.warnings),
+        violations=[v.to_dict() for v in report.violations],
+    )
+
+
 @app.post("/check", response_model=CheckResponse)
 async def check_thesis(
-    file: Annotated[UploadFile, File(description="Thesis PDF file")],
+    file: Annotated[UploadFile, File(description="Thesis PDF file (up to 20 MiB)")],
     spec: Annotated[str, Form(description="Style specification name")] = "rackham",
     pages: Annotated[str | None, Form(description="Page range to check")] = None,
 ) -> CheckResponse:
-    """Check a thesis PDF for formatting compliance.
-
-    Upload a PDF file and specify the style specification to check against.
-    Returns a detailed compliance report with any violations found.
-
-    Parameters:
-    - file: The thesis PDF file
-    - spec: Style specification name (default: rackham)
-    - pages: Optional page range (e.g., "1-10,20")
-    """
-    # Validate file type
+    """Check an uploaded PDF against a built-in style specification."""
     if not file.filename or not file.filename.lower().endswith(".pdf"):
         raise HTTPException(status_code=400, detail="File must be a PDF")
-
-    # Validate spec exists
+    style_spec = _load_spec(spec)
+    if file.size is not None and file.size > MAX_PDF_BYTES:
+        raise HTTPException(status_code=413, detail="PDF exceeds the size limit")
     try:
-        style_spec = SpecLoader.load(spec)
-    except FileNotFoundError:
-        available = SpecLoader.list_builtin_specs()
-        raise HTTPException(
-            status_code=400,
-            detail=f"Unknown spec: {spec}. Available: {', '.join(available)}",
-        )
-
-    # Save uploaded file temporarily
-    try:
-        with tempfile.NamedTemporaryFile(suffix=".pdf", delete=False) as tmp:
-            content = await file.read()
-            tmp.write(content)
-            tmp_path = Path(tmp.name)
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Failed to save file: {e}")
-
-    # Run compliance check
-    try:
-        with ThesisChecker(tmp_path, style_spec) as checker:
-            report = checker.check(pages)
-
-        return CheckResponse(
-            pdf_name=file.filename,
-            spec_name=report.spec_name,
-            pages_checked=report.pages_checked,
-            rules_checked=report.rules_checked,
-            passed=report.passed,
-            error_count=len(report.errors),
-            warning_count=len(report.warnings),
-            violations=[v.to_dict() for v in report.violations],
-        )
-    except ValueError as e:
-        raise HTTPException(status_code=400, detail=str(e))
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Check failed: {e}")
-    finally:
-        # Clean up temp file
-        try:
-            tmp_path.unlink()
-        except Exception:
-            pass
+        with tempfile.TemporaryDirectory(prefix="thesis-check-") as directory:
+            tmp_path = Path(directory) / "upload.pdf"
+            total = 0
+            with tmp_path.open("wb") as output:
+                while chunk := await file.read(CHUNK_BYTES):
+                    total += len(chunk)
+                    if total > MAX_PDF_BYTES:
+                        raise HTTPException(status_code=413, detail="PDF exceeds the size limit")
+                    output.write(chunk)
+            return await run_in_threadpool(_check_pdf, tmp_path, style_spec, pages, file.filename)
+    except HTTPException:
+        raise
+    except Exception as exc:
+        logger.exception("Uploaded PDF check failed")
+        raise HTTPException(status_code=500, detail="Could not check the PDF") from exc
 
 
 def _validate_url(url: str) -> None:
-    """Validate URL to prevent SSRF attacks.
-
-    Args:
-        url: URL to validate.
-
-    Raises:
-        ValueError: If URL is not allowed.
-    """
-    parsed = urlparse(url)
-    if parsed.scheme not in ("http", "https"):
-        raise ValueError("Only http/https URLs allowed")
-
-    hostname = parsed.hostname
-    if not hostname:
-        raise ValueError("Invalid URL: no hostname")
-
-    # Block private/loopback IPs
-    try:
-        ip = ipaddress.ip_address(hostname)
-        if ip.is_private or ip.is_loopback or ip.is_reserved:
-            raise ValueError("Private/loopback/reserved IPs not allowed")
-    except ValueError as e:
-        if "not allowed" in str(e):
-            raise
-        # Not an IP address (it's a hostname) - that's OK
+    """Validate syntax; the downloader also validates DNS before every connection."""
+    validate_url(url)
 
 
 @app.post("/check/url", response_model=CheckResponse)
-async def check_thesis_url(
+def check_thesis_url(
     url: str,
     spec: str = "rackham",
     pages: str | None = None,
 ) -> CheckResponse:
-    """Check a thesis PDF from a URL.
-
-    Provide a URL to a PDF file and specify the style specification.
-
-    Parameters:
-    - url: URL to the thesis PDF
-    - spec: Style specification name (default: rackham)
-    - pages: Optional page range (e.g., "1-10,20")
-    """
-    import urllib.request
-
-    # Validate URL to prevent SSRF
+    """Download a public PDF (up to 20 MiB) and check its formatting."""
     try:
         _validate_url(url)
-    except ValueError as e:
-        raise HTTPException(status_code=400, detail=str(e))
-
-    # Validate spec exists
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+    style_spec = _load_spec(spec)
     try:
-        style_spec = SpecLoader.load(spec)
-    except FileNotFoundError:
-        available = SpecLoader.list_builtin_specs()
-        raise HTTPException(
-            status_code=400,
-            detail=f"Unknown spec: {spec}. Available: {', '.join(available)}",
-        )
-
-    # Initialize tmp_path before try block to avoid NameError in finally
-    tmp_path: Path | None = None
-
-    # Download PDF
-    try:
-        with tempfile.NamedTemporaryFile(suffix=".pdf", delete=False) as tmp:
-            urllib.request.urlretrieve(url, tmp.name)
-            tmp_path = Path(tmp.name)
-    except Exception as e:
-        raise HTTPException(status_code=400, detail=f"Failed to download PDF: {e}")
-
-    # Run compliance check
-    try:
-        with ThesisChecker(tmp_path, style_spec) as checker:
-            report = checker.check(pages)
-
-        # Extract filename from URL
-        pdf_name = url.split("/")[-1] or "thesis.pdf"
-
-        return CheckResponse(
-            pdf_name=pdf_name,
-            spec_name=report.spec_name,
-            pages_checked=report.pages_checked,
-            rules_checked=report.rules_checked,
-            passed=report.passed,
-            error_count=len(report.errors),
-            warning_count=len(report.warnings),
-            violations=[v.to_dict() for v in report.violations],
-        )
-    except ValueError as e:
-        raise HTTPException(status_code=400, detail=str(e))
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Check failed: {e}")
-    finally:
-        # Clean up temp file
-        if tmp_path and tmp_path.exists():
-            try:
-                tmp_path.unlink()
-            except Exception:
-                pass
+        with tempfile.TemporaryDirectory(prefix="thesis-check-") as directory:
+            tmp_path = Path(directory) / "download.pdf"
+            download_pdf(url, tmp_path, max_bytes=MAX_PDF_BYTES)
+            pdf_name = unquote(urlsplit(url).path.rsplit("/", 1)[-1]) or "thesis.pdf"
+            return _check_pdf(tmp_path, style_spec, pages, pdf_name)
+    except PDFTooLargeError as exc:
+        raise HTTPException(status_code=413, detail=str(exc)) from exc
+    except DownloadError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+    except HTTPException:
+        raise
+    except Exception as exc:
+        logger.exception("URL PDF check failed")
+        raise HTTPException(status_code=500, detail="Could not check the PDF") from exc
 
 
-def run_server(host: str = "0.0.0.0", port: int = 8000) -> None:
-    """Run the API server.
-
-    Args:
-        host: Host to bind to.
-        port: Port to listen on.
-    """
+def run_server(host: str = "127.0.0.1", port: int = 8000) -> None:
+    """Run the API server on the local interface by default."""
     import uvicorn
 
     uvicorn.run(app, host=host, port=port)
