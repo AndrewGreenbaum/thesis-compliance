@@ -102,6 +102,8 @@ async def list_specs() -> list[SpecInfo]:
 @app.get("/specs/{name}", response_model=SpecInfo)
 async def get_spec(name: str) -> SpecInfo:
     """Get information about a specific specification."""
+    if name not in SpecLoader.list_builtin_specs():
+        raise HTTPException(status_code=404, detail=f"Spec not found: {name}")
     try:
         spec = SpecLoader.load(name)
         return SpecInfo(
