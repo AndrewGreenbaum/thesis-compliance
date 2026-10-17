@@ -23,6 +23,10 @@ inputs:
     description: 'Style specification (rackham, stanford, mit, cornell, harvard, chicago, unc, rice)'
     required: false
     default: 'rackham'
+  python-version:
+    description: 'Python version used by the checker'
+    required: false
+    default: '3.11'
   pages:
     description: 'Page range to check (e.g., "1-10,20")'
     required: false
@@ -53,67 +57,19 @@ runs:
     - name: Set up Python
       uses: actions/setup-python@v5
       with:
-        python-version: '3.11'
+        python-version: ${{ inputs.python-version }}
 
     - name: Install thesis-compliance
       shell: bash
-      run: |
-        python -m pip install --upgrade pip
-        pip install thesis-compliance
+      run: python -m pip install "$GITHUB_ACTION_PATH"
 
     - name: Run thesis check
       id: check
       shell: bash
-      run: |
-        set +e  # Don't exit on error
-
-        # Build arguments as array to prevent shell injection
-        ARGS=("${{ inputs.pdf-path }}" --spec "${{ inputs.spec }}" --format json)
-
-        if [ -n "${{ inputs.pages }}" ]; then
-          ARGS+=(--pages "${{ inputs.pages }}")
-        fi
-
-        if [ "${{ inputs.strict }}" = "true" ]; then
-          ARGS+=(--strict)
-        fi
-
-        echo "Running: thesis-check ${ARGS[*]}"
-        thesis-check "${ARGS[@]}" > "$RUNNER_TEMP/thesis-results.json" 2>&1
-        EXIT_CODE=$?
-
-        # Parse JSON results
-        if [ -f "$RUNNER_TEMP/thesis-results.json" ]; then
-          ERRORS=$(python -c "import json; data=json.load(open('$RUNNER_TEMP/thesis-results.json')); print(data.get('error_count', 0))" 2>/dev/null || echo "0")
-          WARNINGS=$(python -c "import json; data=json.load(open('$RUNNER_TEMP/thesis-results.json')); print(data.get('warning_count', 0))" 2>/dev/null || echo "0")
-          PASSED=$(python -c "import json; data=json.load(open('$RUNNER_TEMP/thesis-results.json')); print('true' if data.get('passed', False) else 'false')" 2>/dev/null || echo "false")
-        else
-          ERRORS=0
-          WARNINGS=0
-          PASSED="false"
-        fi
-
-        echo "errors=$ERRORS" >> $GITHUB_OUTPUT
-        echo "warnings=$WARNINGS" >> $GITHUB_OUTPUT
-        echo "passed=$PASSED" >> $GITHUB_OUTPUT
-
-        # Display results in console format too - use array for proper quoting
-        DISPLAY_ARGS=("${{ inputs.pdf-path }}" --spec "${{ inputs.spec }}" --format "${{ inputs.format }}")
-        thesis-check "${DISPLAY_ARGS[@]}" || true
-
-        # Exit with appropriate code
-        if [ "$ERRORS" -gt 0 ]; then
-          echo ""
-          echo "::error::Thesis has $ERRORS formatting error(s)"
-          exit 1
-        fi
-
-        if [ "${{ inputs.strict }}" = "true" ] && [ "$WARNINGS" -gt 0 ]; then
-          echo ""
-          echo "::warning::Thesis has $WARNINGS formatting warning(s) (strict mode)"
-          exit 1
-        fi
-
-        echo ""
-        echo "::notice::Thesis formatting check passed!"
-        exit 0
+      env:
+        THESIS_PDF: ${{ inputs.pdf-path }}
+        THESIS_SPEC: ${{ inputs.spec }}
+        THESIS_PAGES: ${{ inputs.pages }}
+        THESIS_STRICT: ${{ inputs.strict }}
+        THESIS_FORMAT: ${{ inputs.format }}
+      run: python "$GITHUB_ACTION_PATH/scripts/run_action.py"

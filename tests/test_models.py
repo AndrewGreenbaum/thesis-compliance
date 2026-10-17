@@ -1,6 +1,6 @@
 """Tests for data models."""
 
-import pytest
+from pathlib import Path
 
 from thesis_compliance.models import (
     BoundingBox,
@@ -11,7 +11,6 @@ from thesis_compliance.models import (
     Severity,
     Violation,
 )
-from pathlib import Path
 
 
 class TestBoundingBox:

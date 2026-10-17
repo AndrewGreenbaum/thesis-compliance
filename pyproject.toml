@@ -24,7 +24,7 @@ classifiers = [
 ]
 
 dependencies = [
-    "pymupdf>=1.23.0",
+    "pymupdf>=1.24.3",
     "pdfplumber>=0.10.0",
     "typer[all]>=0.9.0",
     "rich>=13.0.0",
@@ -39,6 +39,9 @@ api = [
     "python-multipart>=0.0.6",
 ]
 dev = [
+    "fastapi>=0.109.0",
+    "python-multipart>=0.0.6",
+    "httpx>=0.28.0",
     "pytest>=7.0.0",
     "pytest-cov>=4.0.0",
     "ruff>=0.1.0",
@@ -50,9 +53,9 @@ dev = [
 thesis-check = "thesis_compliance.cli:app"
 
 [project.urls]
-Homepage = "https://github.com/thesis-compliance/thesis-compliance"
-Documentation = "https://github.com/thesis-compliance/thesis-compliance#readme"
-Issues = "https://github.com/thesis-compliance/thesis-compliance/issues"
+Homepage = "https://github.com/AndrewGreenbaum/thesis-compliance"
+Documentation = "https://github.com/AndrewGreenbaum/thesis-compliance#readme"
+Issues = "https://github.com/AndrewGreenbaum/thesis-compliance/issues"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/thesis_compliance"]
@@ -69,7 +72,7 @@ python_version = "3.11"
 strict = true
 
 [[tool.mypy.overrides]]
-module = ["fitz", "fitz.*"]
+module = ["pymupdf", "pymupdf.*"]
 ignore_missing_imports = true
 
 [[tool.mypy.overrides]]

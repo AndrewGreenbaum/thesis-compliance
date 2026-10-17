@@ -1,8 +1,8 @@
 """Shared pytest fixtures for thesis compliance tests."""
 
 import tempfile
+from collections.abc import Generator
 from pathlib import Path
-from typing import Generator
 
 import pytest
 
@@ -10,7 +10,6 @@ from thesis_compliance.checker.engine import ThesisChecker
 from thesis_compliance.extractor import PDFDocument
 from thesis_compliance.models import RuleType, Severity, Violation
 from thesis_compliance.spec import SpecLoader, StyleSpec
-
 
 # Directory containing test fixtures
 FIXTURES_DIR = Path(__file__).parent / "fixtures"
@@ -38,6 +37,7 @@ def valid_thesis_pdf() -> Path:
     path = FIXTURES_DIR / "valid_thesis.pdf"
     if not path.exists():
         from tests.fixtures.generate_pdfs import create_valid_thesis
+
         create_valid_thesis()
     return path
 
@@ -48,6 +48,7 @@ def bad_margins_pdf() -> Path:
     path = FIXTURES_DIR / "bad_margins.pdf"
     if not path.exists():
         from tests.fixtures.generate_pdfs import create_bad_margins
+
         create_bad_margins()
     return path
 
@@ -58,6 +59,7 @@ def wrong_font_pdf() -> Path:
     path = FIXTURES_DIR / "wrong_font.pdf"
     if not path.exists():
         from tests.fixtures.generate_pdfs import create_wrong_font
+
         create_wrong_font()
     return path
 
@@ -68,6 +70,7 @@ def single_spaced_pdf() -> Path:
     path = FIXTURES_DIR / "single_spaced.pdf"
     if not path.exists():
         from tests.fixtures.generate_pdfs import create_single_spaced
+
         create_single_spaced()
     return path
 
@@ -78,6 +81,7 @@ def no_page_nums_pdf() -> Path:
     path = FIXTURES_DIR / "no_page_nums.pdf"
     if not path.exists():
         from tests.fixtures.generate_pdfs import create_no_page_numbers
+
         create_no_page_numbers()
     return path
 
@@ -88,6 +92,7 @@ def minimal_pdf() -> Path:
     path = FIXTURES_DIR / "minimal.pdf"
     if not path.exists():
         from tests.fixtures.generate_pdfs import create_minimal_pdf
+
         create_minimal_pdf()
     return path
 
@@ -98,6 +103,7 @@ def empty_pdf() -> Path:
     path = FIXTURES_DIR / "empty.pdf"
     if not path.exists():
         from tests.fixtures.generate_pdfs import create_empty_pdf
+
         create_empty_pdf()
     return path
 
@@ -123,7 +129,9 @@ def default_spec() -> StyleSpec:
 
 
 @pytest.fixture
-def thesis_checker(valid_thesis_pdf: Path, rackham_spec: StyleSpec) -> Generator[ThesisChecker, None, None]:
+def thesis_checker(
+    valid_thesis_pdf: Path, rackham_spec: StyleSpec
+) -> Generator[ThesisChecker, None, None]:
     """Provide a ThesisChecker instance for testing."""
     checker = ThesisChecker(valid_thesis_pdf, rackham_spec)
     yield checker

@@ -5,8 +5,7 @@ from pathlib import Path
 import pytest
 
 from thesis_compliance.checker.engine import ThesisChecker, parse_page_range
-from thesis_compliance.models import ComplianceReport, Severity
-from thesis_compliance.spec import SpecLoader
+from thesis_compliance.models import ComplianceReport
 
 
 class TestParsePageRange:
