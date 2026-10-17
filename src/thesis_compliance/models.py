@@ -1,12 +1,12 @@
 """Core data models for thesis compliance checking."""
 
 from dataclasses import dataclass, field
-from enum import Enum
+from enum import StrEnum
 from pathlib import Path
 from typing import Any
 
 
-class Severity(str, Enum):
+class Severity(StrEnum):
     """Severity level of a compliance violation."""
 
     ERROR = "error"
@@ -14,7 +14,7 @@ class Severity(str, Enum):
     INFO = "info"
 
 
-class RuleType(str, Enum):
+class RuleType(StrEnum):
     """Types of compliance rules."""
 
     MARGIN = "margin"

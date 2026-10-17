@@ -38,8 +38,7 @@ class TestPageNumberExtractor:
         with PDFDocument(no_page_nums_pdf) as doc:
             extractor = PageNumberExtractor(doc)
             page_number = extractor.get_page_number(1)
-            # Should return None or detect lack of page number
-            # The implementation may vary
+            assert page_number is None
 
     def test_page_number_detection_body(self, valid_thesis_pdf: Path):
         """Test page number detection on body pages."""
