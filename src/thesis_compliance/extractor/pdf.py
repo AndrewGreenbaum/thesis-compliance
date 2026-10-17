@@ -3,7 +3,7 @@
 from collections.abc import Iterator
 from pathlib import Path
 
-import fitz  # PyMuPDF
+import pymupdf as fitz  # PyMuPDF
 
 from thesis_compliance.models import BoundingBox, FontInfo, PageInfo, TextBlock
 
@@ -26,7 +26,7 @@ class PDFDocument:
             raise FileNotFoundError(f"PDF not found: {self.path}")
 
         try:
-            self._doc = fitz.open(self.path)
+            self._doc = fitz.open(self.path)  # type: ignore[no-untyped-call]
         except Exception as e:
             raise ValueError(f"Failed to open PDF: {e}") from e
 
@@ -48,7 +48,7 @@ class PDFDocument:
                 self.clear_cache()
                 # Check if document is still open before closing
                 if not self._doc.is_closed:
-                    self._doc.close()
+                    self._doc.close()  # type: ignore[no-untyped-call]
             except Exception:
                 pass
 
@@ -56,7 +56,7 @@ class PDFDocument:
         """Close the PDF document."""
         self.clear_cache()
         if self._doc:
-            self._doc.close()
+            self._doc.close()  # type: ignore[no-untyped-call]
 
     def clear_cache(self) -> None:
         """Clear all cached data."""
@@ -134,7 +134,7 @@ class PDFDocument:
         blocks: list[TextBlock] = []
 
         # Get detailed text with font information
-        text_dict = page.get_text("dict", flags=fitz.TEXT_PRESERVE_WHITESPACE)
+        text_dict = page.get_text("dict", flags=fitz.TEXT_PRESERVE_WHITESPACE)  # type: ignore[no-untyped-call]
 
         for block in text_dict.get("blocks", []):
             if block.get("type") != 0:  # Skip non-text blocks (images, etc.)
@@ -235,5 +235,5 @@ class PDFDocument:
             Plain text content.
         """
         page = self._doc[page_num - 1]
-        result: str = page.get_text()
+        result: str = page.get_text()  # type: ignore[no-untyped-call]
         return result

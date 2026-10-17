@@ -6,8 +6,7 @@ characteristics for testing the compliance checker.
 
 from pathlib import Path
 
-import fitz  # PyMuPDF
-
+import pymupdf as fitz  # PyMuPDF
 
 # Output directory for test PDFs
 FIXTURES_DIR = Path(__file__).parent
@@ -34,7 +33,6 @@ def create_valid_thesis() -> Path:
 
     # Margins in points
     left_margin = 108  # 1.5"
-    right_margin = 72  # 1"
     top_margin = 72  # 1" (2" for title page)
     bottom_margin = 72  # 1"
     title_top_margin = 144  # 2"

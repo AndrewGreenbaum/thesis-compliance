@@ -6,7 +6,7 @@ export type IssueSeverity = "error" | "warning" | "info";
 export interface Violation {
   rule_id: string;
   rule_type: string;
-  severity: "ERROR" | "WARNING" | "INFO";
+  severity: IssueSeverity;
   message: string;
   page: number | null;
   expected: number | string | null;
@@ -77,7 +77,7 @@ export function transformCheckResponse(
       id: `${v.rule_id}-${index}`,
       ruleId: v.rule_id,
       ruleType: v.rule_type,
-      severity: v.severity.toLowerCase() as IssueSeverity,
+      severity: v.severity,
       message: v.message,
       page: v.page,
       details: formatViolationDetails(v),

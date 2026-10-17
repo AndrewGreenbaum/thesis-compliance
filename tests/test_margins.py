@@ -76,12 +76,8 @@ class TestMarginExtractor:
         """Test that tolerance is properly applied."""
         # Tight tolerance should find more violations
         required = Margins(left=1.5, right=1.0, top=1.0, bottom=1.0)
-        violations_tight = margin_extractor.find_margin_violations(
-            required, tolerance=0.01
-        )
-        violations_loose = margin_extractor.find_margin_violations(
-            required, tolerance=0.5
-        )
+        violations_tight = margin_extractor.find_margin_violations(required, tolerance=0.01)
+        violations_loose = margin_extractor.find_margin_violations(required, tolerance=0.5)
         # Loose tolerance should have same or fewer violations
         assert len(violations_loose) <= len(violations_tight)
 

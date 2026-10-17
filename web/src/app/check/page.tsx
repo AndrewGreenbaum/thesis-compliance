@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import FileUpload from "@/components/FileUpload";
 import UniversitySelect from "@/components/UniversitySelect";
@@ -21,26 +21,42 @@ export default function CheckPage() {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
 
+  const analysisController = useRef<AbortController | null>(null);
+
   // Fetch available specs from Python API on mount
   useEffect(() => {
+    let active = true;
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 15000);
     async function fetchSpecs() {
       try {
-        const response = await fetch(`${API_BASE_URL}/specs`);
+        const response = await fetch(`${API_BASE_URL}/specs`, { signal: controller.signal });
         if (!response.ok) {
           throw new Error("Failed to fetch specifications");
         }
         const data: SpecInfo[] = await response.json();
+        if (!active) return;
         setSpecs(data);
-      } catch (err) {
+        setError(null);
+      } catch {
+        if (!active) return;
         setError("Failed to connect to the server. Please ensure the backend is running.");
       } finally {
-        setLoading(false);
+        clearTimeout(timeout);
+        if (active) setLoading(false);
       }
     }
     fetchSpecs();
+    return () => {
+      active = false;
+      clearTimeout(timeout);
+      controller.abort();
+      analysisController.current?.abort();
+      analysisController.current = null;
+    };
   }, []);
 
-  const handleFileSelect = (file: File) => {
+  const handleFileSelect = (file: File | null) => {
     setSelectedFile(file);
     setError(null);
   };
@@ -59,6 +75,9 @@ export default function CheckPage() {
     setStep("analyzing");
     setError(null);
 
+    const controller = new AbortController();
+    analysisController.current = controller;
+    const timeout = setTimeout(() => controller.abort(), 120000);
     try {
       const formData = new FormData();
       formData.append("file", selectedFile);
@@ -67,6 +86,7 @@ export default function CheckPage() {
       const response = await fetch(`${API_BASE_URL}/check`, {
         method: "POST",
         body: formData,
+        signal: controller.signal,
       });
 
       if (!response.ok) {
@@ -76,15 +96,24 @@ export default function CheckPage() {
 
       const checkResponse: CheckResponse = await response.json();
       const reportData = transformCheckResponse(checkResponse, selectedSpec.university);
+      if (analysisController.current !== controller) return;
       setReport(reportData);
       setStep("results");
     } catch (err) {
-      setError(err instanceof Error ? err.message : "An error occurred");
+      if (analysisController.current !== controller) return;
+      setError(controller.signal.aborted
+        ? "Analysis timed out. Try a smaller PDF or check the backend."
+        : err instanceof Error ? err.message : "An error occurred");
       setStep("upload");
+    } finally {
+      clearTimeout(timeout);
+      if (analysisController.current === controller) analysisController.current = null;
     }
   };
 
   const handleReset = () => {
+    analysisController.current?.abort();
+    analysisController.current = null;
     setStep("upload");
     setSelectedFile(null);
     setSelectedSpec(null);
@@ -180,7 +209,7 @@ export default function CheckPage() {
               </h1>
               <p className="text-gray-600 mb-8">
                 Upload your thesis PDF and select your university to get an
-                instant compliance report.
+                formatting report.
               </p>
 
               <div className="space-y-8">
