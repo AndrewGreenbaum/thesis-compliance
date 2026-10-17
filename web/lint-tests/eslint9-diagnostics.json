@@ -1,0 +1,867 @@
+[
+  {
+    "name": "display-name (jsx)",
+    "code": "import { memo } from \"react\"; export default memo(() => <div />);",
+    "language": "jsx",
+    "rule": "react/display-name",
+    "messages": [
+      {
+        "ruleId": "react/display-name",
+        "severity": 2,
+        "message": "Component definition is missing display name",
+        "line": 1,
+        "column": 46,
+        "endLine": 1,
+        "endColumn": 65
+      }
+    ]
+  },
+  {
+    "name": "display-name (tsx)",
+    "code": "import { memo } from \"react\"; export default memo(() => <div />);",
+    "language": "tsx",
+    "rule": "react/display-name",
+    "messages": [
+      {
+        "ruleId": "react/display-name",
+        "severity": 2,
+        "message": "Component definition is missing display name",
+        "line": 1,
+        "column": 46,
+        "endLine": 1,
+        "endColumn": 65
+      }
+    ]
+  },
+  {
+    "name": "list keys (jsx)",
+    "code": "export default function Page() { return [1,2].map(n => <span>{n}</span>); }",
+    "language": "jsx",
+    "rule": "react/jsx-key",
+    "messages": [
+      {
+        "ruleId": "react/jsx-key",
+        "severity": 2,
+        "message": "Missing \"key\" prop for element in iterator",
+        "line": 1,
+        "column": 56,
+        "endLine": 1,
+        "endColumn": 72
+      }
+    ]
+  },
+  {
+    "name": "list keys (tsx)",
+    "code": "export default function Page() { return [1,2].map(n => <span>{n}</span>); }",
+    "language": "tsx",
+    "rule": "react/jsx-key",
+    "messages": [
+      {
+        "ruleId": "react/jsx-key",
+        "severity": 2,
+        "message": "Missing \"key\" prop for element in iterator",
+        "line": 1,
+        "column": 56,
+        "endLine": 1,
+        "endColumn": 72
+      }
+    ]
+  },
+  {
+    "name": "JSX comments (jsx)",
+    "code": "export default function Page() { return <div>// comment</div>; }",
+    "language": "jsx",
+    "rule": "react/jsx-no-comment-textnodes",
+    "messages": [
+      {
+        "ruleId": "react/jsx-no-comment-textnodes",
+        "severity": 2,
+        "message": "Comments inside children section of tag should be placed inside braces",
+        "line": 1,
+        "column": 46,
+        "endLine": 1,
+        "endColumn": 56
+      }
+    ]
+  },
+  {
+    "name": "JSX comments (tsx)",
+    "code": "export default function Page() { return <div>// comment</div>; }",
+    "language": "tsx",
+    "rule": "react/jsx-no-comment-textnodes",
+    "messages": [
+      {
+        "ruleId": "react/jsx-no-comment-textnodes",
+        "severity": 2,
+        "message": "Comments inside children section of tag should be placed inside braces",
+        "line": 1,
+        "column": 46,
+        "endLine": 1,
+        "endColumn": 56
+      }
+    ]
+  },
+  {
+    "name": "duplicate props (jsx)",
+    "code": "export default function Page() { return <div id=\"a\" id=\"b\" />; }",
+    "language": "jsx",
+    "rule": "react/jsx-no-duplicate-props",
+    "messages": [
+      {
+        "ruleId": "react/jsx-no-duplicate-props",
+        "severity": 2,
+        "message": "No duplicate props allowed",
+        "line": 1,
+        "column": 53,
+        "endLine": 1,
+        "endColumn": 59
+      }
+    ]
+  },
+  {
+    "name": "duplicate props (tsx)",
+    "code": "export default function Page() { return <div id=\"a\" id=\"b\" />; }",
+    "language": "tsx",
+    "rule": "react/jsx-no-duplicate-props",
+    "messages": [
+      {
+        "ruleId": "react/jsx-no-duplicate-props",
+        "severity": 2,
+        "message": "No duplicate props allowed",
+        "line": 1,
+        "column": 53,
+        "endLine": 1,
+        "endColumn": 59
+      }
+    ]
+  },
+  {
+    "name": "undefined JSX (jsx)",
+    "code": "export default function Page() { return <Missing />; }",
+    "language": "jsx",
+    "rule": "react/jsx-no-undef",
+    "messages": [
+      {
+        "ruleId": "react/jsx-no-undef",
+        "severity": 2,
+        "message": "'Missing' is not defined.",
+        "line": 1,
+        "column": 42,
+        "endLine": 1,
+        "endColumn": 49
+      }
+    ]
+  },
+  {
+    "name": "undefined JSX (tsx)",
+    "code": "export default function Page() { return <Missing />; }",
+    "language": "tsx",
+    "rule": "react/jsx-no-undef",
+    "messages": [
+      {
+        "ruleId": "react/jsx-no-undef",
+        "severity": 2,
+        "message": "'Missing' is not defined.",
+        "line": 1,
+        "column": 42,
+        "endLine": 1,
+        "endColumn": 49
+      }
+    ]
+  },
+  {
+    "name": "children prop (jsx)",
+    "code": "export default function Page() { return <div children=\"text\" />; }",
+    "language": "jsx",
+    "rule": "react/no-children-prop",
+    "messages": [
+      {
+        "ruleId": "react/no-children-prop",
+        "severity": 2,
+        "message": "Do not pass children as props. Instead, nest children between the opening and closing tags.",
+        "line": 1,
+        "column": 46,
+        "endLine": 1,
+        "endColumn": 61
+      }
+    ]
+  },
+  {
+    "name": "children prop (tsx)",
+    "code": "export default function Page() { return <div children=\"text\" />; }",
+    "language": "tsx",
+    "rule": "react/no-children-prop",
+    "messages": [
+      {
+        "ruleId": "react/no-children-prop",
+        "severity": 2,
+        "message": "Do not pass children as props. Instead, nest children between the opening and closing tags.",
+        "line": 1,
+        "column": 46,
+        "endLine": 1,
+        "endColumn": 61
+      }
+    ]
+  },
+  {
+    "name": "danger and children (jsx)",
+    "code": "export default function Page() { return <div dangerouslySetInnerHTML={{__html:\"x\"}}>text</div>; }",
+    "language": "jsx",
+    "rule": "react/no-danger-with-children",
+    "messages": [
+      {
+        "ruleId": "react/no-danger-with-children",
+        "severity": 2,
+        "message": "Only set one of `children` or `props.dangerouslySetInnerHTML`",
+        "line": 1,
+        "column": 41,
+        "endLine": 1,
+        "endColumn": 95
+      }
+    ]
+  },
+  {
+    "name": "danger and children (tsx)",
+    "code": "export default function Page() { return <div dangerouslySetInnerHTML={{__html:\"x\"}}>text</div>; }",
+    "language": "tsx",
+    "rule": "react/no-danger-with-children",
+    "messages": [
+      {
+        "ruleId": "react/no-danger-with-children",
+        "severity": 2,
+        "message": "Only set one of `children` or `props.dangerouslySetInnerHTML`",
+        "line": 1,
+        "column": 41,
+        "endLine": 1,
+        "endColumn": 95
+      }
+    ]
+  },
+  {
+    "name": "deprecated APIs (jsx)",
+    "code": "import ReactDOM from \"react-dom\"; ReactDOM.render(<div />, document.body);",
+    "language": "jsx",
+    "rule": "react/no-deprecated",
+    "messages": [
+      {
+        "ruleId": "react/no-deprecated",
+        "severity": 2,
+        "message": "ReactDOM.render is deprecated since React 18.0.0, use createRoot instead, see https://reactjs.org/link/switch-to-createroot",
+        "line": 1,
+        "column": 35,
+        "endLine": 1,
+        "endColumn": 50
+      }
+    ]
+  },
+  {
+    "name": "deprecated APIs (tsx)",
+    "code": "import ReactDOM from \"react-dom\"; ReactDOM.render(<div />, document.body);",
+    "language": "tsx",
+    "rule": "react/no-deprecated",
+    "messages": [
+      {
+        "ruleId": "react/no-deprecated",
+        "severity": 2,
+        "message": "ReactDOM.render is deprecated since React 18.0.0, use createRoot instead, see https://reactjs.org/link/switch-to-createroot",
+        "line": 1,
+        "column": 35,
+        "endLine": 1,
+        "endColumn": 50
+      }
+    ]
+  },
+  {
+    "name": "state mutation (jsx)",
+    "code": "import React from \"react\"; export default class Page extends React.Component { render() { this.state.x = 1; return <div />; } }",
+    "language": "jsx",
+    "rule": "react/no-direct-mutation-state",
+    "messages": [
+      {
+        "ruleId": "react/no-direct-mutation-state",
+        "severity": 2,
+        "message": "Do not mutate state directly. Use setState().",
+        "line": 1,
+        "column": 91,
+        "endLine": 1,
+        "endColumn": 101
+      }
+    ]
+  },
+  {
+    "name": "state mutation (tsx)",
+    "code": "import React from \"react\"; export default class Page extends React.Component { render() { this.state.x = 1; return <div />; } }",
+    "language": "tsx",
+    "rule": "react/no-direct-mutation-state",
+    "messages": [
+      {
+        "ruleId": "react/no-direct-mutation-state",
+        "severity": 2,
+        "message": "Do not mutate state directly. Use setState().",
+        "line": 1,
+        "column": 91,
+        "endLine": 1,
+        "endColumn": 101
+      }
+    ]
+  },
+  {
+    "name": "findDOMNode (jsx)",
+    "code": "import ReactDOM from \"react-dom\"; ReactDOM.findDOMNode(document.body);",
+    "language": "jsx",
+    "rule": "react/no-find-dom-node",
+    "messages": [
+      {
+        "ruleId": "react/no-find-dom-node",
+        "severity": 2,
+        "message": "Do not use findDOMNode. It doesn’t work with function components and is deprecated in StrictMode. See https://reactjs.org/docs/react-dom.html#finddomnode",
+        "line": 1,
+        "column": 35,
+        "endLine": 1,
+        "endColumn": 55
+      }
+    ]
+  },
+  {
+    "name": "findDOMNode (tsx)",
+    "code": "import ReactDOM from \"react-dom\"; ReactDOM.findDOMNode(document.body);",
+    "language": "tsx",
+    "rule": "react/no-find-dom-node",
+    "messages": [
+      {
+        "ruleId": "react/no-find-dom-node",
+        "severity": 2,
+        "message": "Do not use findDOMNode. It doesn’t work with function components and is deprecated in StrictMode. See https://reactjs.org/docs/react-dom.html#finddomnode",
+        "line": 1,
+        "column": 35,
+        "endLine": 1,
+        "endColumn": 55
+      }
+    ]
+  },
+  {
+    "name": "isMounted (jsx)",
+    "code": "import React from \"react\"; export default class Page extends React.Component { render() { return this.isMounted() ? <div /> : null; } }",
+    "language": "jsx",
+    "rule": "react/no-is-mounted",
+    "messages": [
+      {
+        "ruleId": "react/no-is-mounted",
+        "severity": 2,
+        "message": "Do not use isMounted",
+        "line": 1,
+        "column": 98,
+        "endLine": 1,
+        "endColumn": 112
+      }
+    ]
+  },
+  {
+    "name": "isMounted (tsx)",
+    "code": "import React from \"react\"; export default class Page extends React.Component { render() { return this.isMounted() ? <div /> : null; } }",
+    "language": "tsx",
+    "rule": "react/no-is-mounted",
+    "messages": [
+      {
+        "ruleId": "react/no-is-mounted",
+        "severity": 2,
+        "message": "Do not use isMounted",
+        "line": 1,
+        "column": 98,
+        "endLine": 1,
+        "endColumn": 112
+      }
+    ]
+  },
+  {
+    "name": "render return (jsx)",
+    "code": "import ReactDOM from \"react-dom\"; const root = ReactDOM.render(<div />, document.body); export default root;",
+    "language": "jsx",
+    "rule": "react/no-render-return-value",
+    "messages": [
+      {
+        "ruleId": "react/no-render-return-value",
+        "severity": 2,
+        "message": "Do not depend on the return value from ReactDOM.render",
+        "line": 1,
+        "column": 48,
+        "endLine": 1,
+        "endColumn": 63
+      },
+      {
+        "ruleId": "react/no-deprecated",
+        "severity": 2,
+        "message": "ReactDOM.render is deprecated since React 18.0.0, use createRoot instead, see https://reactjs.org/link/switch-to-createroot",
+        "line": 1,
+        "column": 48,
+        "endLine": 1,
+        "endColumn": 63
+      }
+    ]
+  },
+  {
+    "name": "render return (tsx)",
+    "code": "import ReactDOM from \"react-dom\"; const root = ReactDOM.render(<div />, document.body); export default root;",
+    "language": "tsx",
+    "rule": "react/no-render-return-value",
+    "messages": [
+      {
+        "ruleId": "react/no-render-return-value",
+        "severity": 2,
+        "message": "Do not depend on the return value from ReactDOM.render",
+        "line": 1,
+        "column": 48,
+        "endLine": 1,
+        "endColumn": 63
+      },
+      {
+        "ruleId": "react/no-deprecated",
+        "severity": 2,
+        "message": "ReactDOM.render is deprecated since React 18.0.0, use createRoot instead, see https://reactjs.org/link/switch-to-createroot",
+        "line": 1,
+        "column": 48,
+        "endLine": 1,
+        "endColumn": 63
+      }
+    ]
+  },
+  {
+    "name": "string refs (jsx)",
+    "code": "import React from \"react\"; export default class Page extends React.Component { render() { return <div ref=\"node\" />; } }",
+    "language": "jsx",
+    "rule": "react/no-string-refs",
+    "messages": [
+      {
+        "ruleId": "react/no-string-refs",
+        "severity": 2,
+        "message": "Using string literals in ref attributes is deprecated.",
+        "line": 1,
+        "column": 103,
+        "endLine": 1,
+        "endColumn": 113
+      }
+    ]
+  },
+  {
+    "name": "string refs (tsx)",
+    "code": "import React from \"react\"; export default class Page extends React.Component { render() { return <div ref=\"node\" />; } }",
+    "language": "tsx",
+    "rule": "react/no-string-refs",
+    "messages": [
+      {
+        "ruleId": "react/no-string-refs",
+        "severity": 2,
+        "message": "Using string literals in ref attributes is deprecated.",
+        "line": 1,
+        "column": 103,
+        "endLine": 1,
+        "endColumn": 113
+      }
+    ]
+  },
+  {
+    "name": "unescaped text (jsx)",
+    "code": "export default function Page() { return <div>don't</div>; }",
+    "language": "jsx",
+    "rule": "react/no-unescaped-entities",
+    "messages": [
+      {
+        "ruleId": "react/no-unescaped-entities",
+        "severity": 2,
+        "message": "`'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`.",
+        "line": 1,
+        "column": 49
+      }
+    ]
+  },
+  {
+    "name": "unescaped text (tsx)",
+    "code": "export default function Page() { return <div>don't</div>; }",
+    "language": "tsx",
+    "rule": "react/no-unescaped-entities",
+    "messages": [
+      {
+        "ruleId": "react/no-unescaped-entities",
+        "severity": 2,
+        "message": "`'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`.",
+        "line": 1,
+        "column": 49
+      }
+    ]
+  },
+  {
+    "name": "render missing return (jsx)",
+    "code": "import React from \"react\"; export default class Page extends React.Component { render() { <div />; } }",
+    "language": "jsx",
+    "rule": "react/require-render-return",
+    "messages": [
+      {
+        "ruleId": "react/require-render-return",
+        "severity": 2,
+        "message": "Your render method should have a return statement",
+        "line": 1,
+        "column": 80,
+        "endLine": 1,
+        "endColumn": 101
+      }
+    ]
+  },
+  {
+    "name": "render missing return (tsx)",
+    "code": "import React from \"react\"; export default class Page extends React.Component { render() { <div />; } }",
+    "language": "tsx",
+    "rule": "react/require-render-return",
+    "messages": [
+      {
+        "ruleId": "react/require-render-return",
+        "severity": 2,
+        "message": "Your render method should have a return statement",
+        "line": 1,
+        "column": 80,
+        "endLine": 1,
+        "endColumn": 101
+      }
+    ]
+  },
+  {
+    "name": "anonymous default export (jsx)",
+    "code": "export default {};",
+    "language": "jsx",
+    "rule": "import/no-anonymous-default-export",
+    "messages": [
+      {
+        "ruleId": "import/no-anonymous-default-export",
+        "severity": 1,
+        "message": "Assign object to a variable before exporting as module default",
+        "line": 1,
+        "column": 1,
+        "endLine": 1,
+        "endColumn": 19
+      }
+    ]
+  },
+  {
+    "name": "anonymous default export (tsx)",
+    "code": "export default {};",
+    "language": "tsx",
+    "rule": "import/no-anonymous-default-export",
+    "messages": [
+      {
+        "ruleId": "import/no-anonymous-default-export",
+        "severity": 1,
+        "message": "Assign object to a variable before exporting as module default",
+        "line": 1,
+        "column": 1,
+        "endLine": 1,
+        "endColumn": 19
+      }
+    ]
+  },
+  {
+    "name": "image alternative text (jsx)",
+    "code": "export default function Page() { return <img src=\"/x.png\" />; }",
+    "language": "jsx",
+    "rule": "jsx-a11y/alt-text",
+    "messages": [
+      {
+        "ruleId": "@next/next/no-img-element",
+        "severity": 1,
+        "message": "Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element",
+        "line": 1,
+        "column": 41,
+        "endLine": 1,
+        "endColumn": 61
+      },
+      {
+        "ruleId": "jsx-a11y/alt-text",
+        "severity": 1,
+        "message": "img elements must have an alt prop, either with meaningful text, or an empty string for decorative images.",
+        "line": 1,
+        "column": 41,
+        "endLine": 1,
+        "endColumn": 61
+      }
+    ]
+  },
+  {
+    "name": "image alternative text (tsx)",
+    "code": "export default function Page() { return <img src=\"/x.png\" />; }",
+    "language": "tsx",
+    "rule": "jsx-a11y/alt-text",
+    "messages": [
+      {
+        "ruleId": "@next/next/no-img-element",
+        "severity": 1,
+        "message": "Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element",
+        "line": 1,
+        "column": 41,
+        "endLine": 1,
+        "endColumn": 61
+      },
+      {
+        "ruleId": "jsx-a11y/alt-text",
+        "severity": 1,
+        "message": "img elements must have an alt prop, either with meaningful text, or an empty string for decorative images.",
+        "line": 1,
+        "column": 41,
+        "endLine": 1,
+        "endColumn": 61
+      }
+    ]
+  },
+  {
+    "name": "ARIA names (jsx)",
+    "code": "export default function Page() { return <div aria-labeledby=\"x\" />; }",
+    "language": "jsx",
+    "rule": "jsx-a11y/aria-props",
+    "messages": [
+      {
+        "ruleId": "jsx-a11y/aria-props",
+        "severity": 1,
+        "message": "aria-labeledby: This attribute is an invalid ARIA attribute. Did you mean to use aria-labelledby?",
+        "line": 1,
+        "column": 46,
+        "endLine": 1,
+        "endColumn": 64
+      }
+    ]
+  },
+  {
+    "name": "ARIA names (tsx)",
+    "code": "export default function Page() { return <div aria-labeledby=\"x\" />; }",
+    "language": "tsx",
+    "rule": "jsx-a11y/aria-props",
+    "messages": [
+      {
+        "ruleId": "jsx-a11y/aria-props",
+        "severity": 1,
+        "message": "aria-labeledby: This attribute is an invalid ARIA attribute. Did you mean to use aria-labelledby?",
+        "line": 1,
+        "column": 46,
+        "endLine": 1,
+        "endColumn": 64
+      }
+    ]
+  },
+  {
+    "name": "ARIA values (jsx)",
+    "code": "export default function Page() { return <div aria-hidden=\"invalid\" />; }",
+    "language": "jsx",
+    "rule": "jsx-a11y/aria-proptypes",
+    "messages": [
+      {
+        "ruleId": "jsx-a11y/aria-proptypes",
+        "severity": 1,
+        "message": "The value for aria-hidden must be a boolean.",
+        "line": 1,
+        "column": 46,
+        "endLine": 1,
+        "endColumn": 67
+      }
+    ]
+  },
+  {
+    "name": "ARIA values (tsx)",
+    "code": "export default function Page() { return <div aria-hidden=\"invalid\" />; }",
+    "language": "tsx",
+    "rule": "jsx-a11y/aria-proptypes",
+    "messages": [
+      {
+        "ruleId": "jsx-a11y/aria-proptypes",
+        "severity": 1,
+        "message": "The value for aria-hidden must be a boolean.",
+        "line": 1,
+        "column": 46,
+        "endLine": 1,
+        "endColumn": 67
+      }
+    ]
+  },
+  {
+    "name": "ARIA unsupported element (jsx)",
+    "code": "export default function Page() { return <meta aria-label=\"x\" />; }",
+    "language": "jsx",
+    "rule": "jsx-a11y/aria-unsupported-elements",
+    "messages": [
+      {
+        "ruleId": "jsx-a11y/aria-unsupported-elements",
+        "severity": 1,
+        "message": "This element does not support ARIA roles, states and properties. Try removing the prop 'aria-label'.",
+        "line": 1,
+        "column": 41,
+        "endLine": 1,
+        "endColumn": 64
+      }
+    ]
+  },
+  {
+    "name": "ARIA unsupported element (tsx)",
+    "code": "export default function Page() { return <meta aria-label=\"x\" />; }",
+    "language": "tsx",
+    "rule": "jsx-a11y/aria-unsupported-elements",
+    "messages": [
+      {
+        "ruleId": "jsx-a11y/aria-unsupported-elements",
+        "severity": 1,
+        "message": "This element does not support ARIA roles, states and properties. Try removing the prop 'aria-label'.",
+        "line": 1,
+        "column": 41,
+        "endLine": 1,
+        "endColumn": 64
+      }
+    ]
+  },
+  {
+    "name": "required ARIA props (jsx)",
+    "code": "export default function Page() { return <div role=\"checkbox\" />; }",
+    "language": "jsx",
+    "rule": "jsx-a11y/role-has-required-aria-props",
+    "messages": [
+      {
+        "ruleId": "jsx-a11y/role-has-required-aria-props",
+        "severity": 1,
+        "message": "Elements with the ARIA role \"checkbox\" must have the following attributes defined: aria-checked",
+        "line": 1,
+        "column": 46,
+        "endLine": 1,
+        "endColumn": 61
+      }
+    ]
+  },
+  {
+    "name": "required ARIA props (tsx)",
+    "code": "export default function Page() { return <div role=\"checkbox\" />; }",
+    "language": "tsx",
+    "rule": "jsx-a11y/role-has-required-aria-props",
+    "messages": [
+      {
+        "ruleId": "jsx-a11y/role-has-required-aria-props",
+        "severity": 1,
+        "message": "Elements with the ARIA role \"checkbox\" must have the following attributes defined: aria-checked",
+        "line": 1,
+        "column": 46,
+        "endLine": 1,
+        "endColumn": 61
+      }
+    ]
+  },
+  {
+    "name": "unsupported role props (jsx)",
+    "code": "export default function Page() { return <div role=\"button\" aria-checked=\"true\" />; }",
+    "language": "jsx",
+    "rule": "jsx-a11y/role-supports-aria-props",
+    "messages": [
+      {
+        "ruleId": "jsx-a11y/role-supports-aria-props",
+        "severity": 1,
+        "message": "The attribute aria-checked is not supported by the role button.",
+        "line": 1,
+        "column": 41,
+        "endLine": 1,
+        "endColumn": 82
+      }
+    ]
+  },
+  {
+    "name": "unsupported role props (tsx)",
+    "code": "export default function Page() { return <div role=\"button\" aria-checked=\"true\" />; }",
+    "language": "tsx",
+    "rule": "jsx-a11y/role-supports-aria-props",
+    "messages": [
+      {
+        "ruleId": "jsx-a11y/role-supports-aria-props",
+        "severity": 1,
+        "message": "The attribute aria-checked is not supported by the role button.",
+        "line": 1,
+        "column": 41,
+        "endLine": 1,
+        "endColumn": 82
+      }
+    ]
+  },
+  {
+    "name": "hook call order (jsx)",
+    "code": "import { useState } from \"react\"; export default function Page({ enabled }) { if (enabled) useState(0); return <div />; }",
+    "language": "jsx",
+    "rule": "react-hooks/rules-of-hooks",
+    "messages": [
+      {
+        "ruleId": "react-hooks/rules-of-hooks",
+        "severity": 2,
+        "message": "React Hook \"useState\" is called conditionally. React Hooks must be called in the exact same order in every component render.",
+        "line": 1,
+        "column": 92,
+        "endLine": 1,
+        "endColumn": 100
+      }
+    ]
+  },
+  {
+    "name": "hook call order (tsx)",
+    "code": "import { useState } from \"react\"; export default function Page({ enabled }) { if (enabled) useState(0); return <div />; }",
+    "language": "tsx",
+    "rule": "react-hooks/rules-of-hooks",
+    "messages": [
+      {
+        "ruleId": "react-hooks/rules-of-hooks",
+        "severity": 2,
+        "message": "React Hook \"useState\" is called conditionally. React Hooks must be called in the exact same order in every component render.",
+        "line": 1,
+        "column": 92,
+        "endLine": 1,
+        "endColumn": 100
+      }
+    ]
+  },
+  {
+    "name": "Next script rule (jsx)",
+    "code": "export default function Page() { return <script src=\"/script.js\" />; }",
+    "language": "jsx",
+    "rule": "@next/next/no-sync-scripts",
+    "messages": [
+      {
+        "ruleId": "@next/next/no-sync-scripts",
+        "severity": 2,
+        "message": "Synchronous scripts should not be used. See: https://nextjs.org/docs/messages/no-sync-scripts",
+        "line": 1,
+        "column": 41,
+        "endLine": 1,
+        "endColumn": 68
+      }
+    ]
+  },
+  {
+    "name": "Next script rule (tsx)",
+    "code": "export default function Page() { return <script src=\"/script.js\" />; }",
+    "language": "tsx",
+    "rule": "@next/next/no-sync-scripts",
+    "messages": [
+      {
+        "ruleId": "@next/next/no-sync-scripts",
+        "severity": 2,
+        "message": "Synchronous scripts should not be used. See: https://nextjs.org/docs/messages/no-sync-scripts",
+        "line": 1,
+        "column": 41,
+        "endLine": 1,
+        "endColumn": 68
+      }
+    ]
+  },
+  {
+    "name": "TypeScript any (tsx)",
+    "code": "export default function Page({ value }: { value: any }) { return <div>{value}</div>; }",
+    "language": "tsx",
+    "rule": "@typescript-eslint/no-explicit-any",
+    "messages": [
+      {
+        "ruleId": "@typescript-eslint/no-explicit-any",
+        "severity": 2,
+        "message": "Unexpected any. Specify a different type.",
+        "line": 1,
+        "column": 50,
+        "endLine": 1,
+        "endColumn": 53
+      }
+    ]
+  }
+]

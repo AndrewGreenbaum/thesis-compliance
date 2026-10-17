@@ -30,7 +30,7 @@ Start the API from the repository root with the virtual environment active:
 uvicorn thesis_compliance.api:app --host 127.0.0.1 --port 8000
 ```
 
-In another terminal, with Node.js 20.9 or newer:
+In another terminal, with Node.js 22.13+ or 24:
 
 ```sh
 cd web
@@ -57,6 +57,7 @@ ruff format --check src tests scripts
 mypy src
 cd web
 npm run lint
+npm run test:lint-config
 npm run build
 npx playwright install chromium
 npm run test:e2e
