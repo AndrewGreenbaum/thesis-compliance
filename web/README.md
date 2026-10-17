@@ -1,141 +1,107 @@
-# ThesisCheck
+# ThesisCheck frontend
 
-**Never get your thesis rejected for formatting again.**
+A Next.js interface for the Python thesis-formatting checker. It loads the
+available university specifications from the API, uploads a PDF, and displays
+errors, warnings, and suggestions returned by the checker.
 
-ThesisCheck is a web-based tool that validates thesis/dissertation PDF formatting against university-specific requirements in real-time.
+Findings need human review. The bundled university specifications are snapshots;
+a passing report does not guarantee acceptance by a graduate school.
 
-## Features
+## Run locally
 
-- **PDF Upload**: Drag-and-drop or click to upload your thesis PDF
-- **University Selection**: Choose from 8 supported universities (and growing)
-- **Instant Compliance Report**: Get detailed feedback on formatting issues
-- **Issue Categorization**: Errors (must fix), Warnings (review), and Info (manual check)
-- **Actionable Suggestions**: Each issue includes specific fix recommendations
+Use Python 3.11 or newer, Node.js 22.13+ or 24, and npm. Start the API from the
+repository root:
 
-## Supported Universities
+```sh
+git clone https://github.com/AndrewGreenbaum/thesis-compliance.git
+cd thesis-compliance
+python3 -m venv .venv
+source .venv/bin/activate
+python -m pip install -e ".[api]"
+uvicorn thesis_compliance.api:app --host 127.0.0.1 --port 8000
+```
 
-- Rice University
-- University of North Carolina at Chapel Hill
-- Cornell University
-- University of Notre Dame
-- Massachusetts Institute of Technology
-- Stanford University
-- University of California, Berkeley
-- University of Illinois Urbana-Champaign
+In a second terminal, from the repository root:
 
-## What We Check
-
-- **Margins**: Left, right, top, and bottom margin compliance
-- **Page Size**: US Letter (8.5" x 11") validation
-- **Page Orientation**: Portrait vs landscape detection
-- **Page Numbers**: Position and style requirements
-- **Font Requirements**: Size ranges (coming soon)
-- **Line Spacing**: Double spacing verification (coming soon)
-
-## Getting Started
-
-### Prerequisites
-
-- Node.js 22 or 24
-- npm
-
-### Installation
-
-```bash
-# Clone the repository
-git clone https://github.com/yourusername/thesis-check.git
-cd thesis-check
-
-# Install dependencies
+```sh
+cd web
 npm ci
-
-# Run the development server
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) in your browser.
+Open http://localhost:3000/check. The frontend requires the API to list
+specifications and analyze PDFs; the CLI can run independently. Uploads are
+limited to 20 MiB.
 
-### Production Build
+The API address defaults to http://localhost:8000. Set `NEXT_PUBLIC_API_URL`
+before starting the frontend or building it to use a different address. The API
+allows http://localhost:3000 by default; set its comma-separated `CORS_ORIGINS`
+when using another frontend origin.
 
-```bash
+For a production frontend build, run `npm run build` then `npm start` in `web`.
+The Python API remains a separate service. External deployments also need a
+proxy request-size limit; see the [repository README](../README.md).
+
+## Checks
+
+From `web`:
+
+```sh
+npm ci
+npm ls --all
+npm run lint
+npm run test:lint-config
+npm audit --audit-level=high
 npm run build
-npm start
+npx playwright install chromium
+npm run test:e2e
 ```
 
-## Tech Stack
+Browser tests use mocked API responses. The Python test suite and local CLI
+instructions are in the [repository README](../README.md).
 
-- **Framework**: Next.js 16 (App Router)
-- **Styling**: Tailwind CSS
-- **PDF Processing**: Python API (the browser uploads PDFs for checking)
-- **Language**: TypeScript
+## Source layout
 
-## Project Structure
+- `src/app/check/page.tsx`: fetches `/specs`, posts PDFs to `/check`, and manages the upload/results flow.
+- `src/components/`: PDF selection, university selection, and report display.
+- `src/lib/types.ts`: API response types and display conversion.
+- `../src/thesis_compliance/api.py`: FastAPI endpoints; PDF parsing runs in Python.
+- `../src/thesis_compliance/spec/builtin/`: bundled YAML university specifications.
 
-```
-thesis-check/
-├── src/
-│   ├── app/
-│   │   ├── page.tsx              # Landing page
-│   │   ├── check/page.tsx        # Upload & check page
-│   │   ├── api/analyze/route.ts  # PDF analysis API
-│   │   ├── layout.tsx            # Root layout
-│   │   └── globals.css           # Global styles
-│   ├── components/
-│   │   ├── FileUpload.tsx        # PDF upload component
-│   │   ├── UniversitySelect.tsx  # University selector
-│   │   └── ComplianceReport.tsx  # Results display
-│   └── lib/
-│       ├── universities.json     # University rules database
-│       ├── types.ts              # TypeScript types
-│       ├── pdf-analyzer.ts       # PDF parsing logic
-│       └── compliance-checker.ts # Rule validation
-```
+Use `thesis-check list-specs` to see the current specifications. Add or update
+YAML specifications in the Python package, then test them with the CLI; there is
+no separate browser university database or PDF analyzer.
 
-## Adding a New University
+## Lint dependency compatibility
 
-1. Open `src/lib/universities.json`
-2. Add a new entry following the existing schema:
+ESLint 10.13.0 runs through Next's published ESLint 10 compatibility layer in
+`eslint-config-next` 16.4.2. Next restores the removed rule-context APIs used by
+React/import rules and adapts its Babel parser. See
+[Next PR #99628](https://github.com/vercel/next.js/pull/99628) and
+[the upstream implementation](https://github.com/vercel/next.js/commit/907721a66e8b4174515445c27068d9835bd424d8).
 
-```json
-{
-  "id": "your_university",
-  "name": "Your University Name",
-  "guide_url": "https://...",
-  "rules": {
-    "margins": { "left": 1.5, "right": 1.0, "top": 1.0, "bottom": 1.0, "tolerance": 0.05 },
-    "fonts": { "min_size": 10, "max_size": 12, "allowed_families": [...] },
-    "spacing": { "line_spacing": "double", "paragraph_spacing": "consistent" },
-    "page_numbers": { "position": "bottom-center", ... },
-    "headings": { "chapter_new_page": true, "min_lines_after_heading": 2 },
-    "widows_orphans": { "max_orphan_lines": 1, "max_widow_lines": 1 }
-  }
-}
-```
+The three plugins below still advertise ESLint 9 peer ranges. Version-scoped
+overrides under `eslint-config-next@16.4.2` resolve those peers to our pinned
+ESLint 10, using Next's tested runtime compatibility. No lint rules or audit
+findings are suppressed, and `npm ci` needs neither `--force` nor
+`--legacy-peer-deps`.
 
-## Future Enhancements
+| Existing checks | Implementation after the upgrade | Coverage |
+| --- | --- | --- |
+| Next recommended and Core Web Vitals | Same `@next/eslint-plugin-next` 16.4.2 | Same rule names, levels and options; page-link and script regressions |
+| React | Same `eslint-plugin-react` 7.37.5 through Next's context bridge | All 17 enabled rules retained; 15 diagnostic rules exercised in JSX and TSX, plus reference-tracking cases |
+| Accessibility | Same `eslint-plugin-jsx-a11y` 6.10.2 | All 6 enabled rules exercised in JSX and TSX |
+| Imports | Same `eslint-plugin-import` 2.32.0 through Next's context bridge | Anonymous-default-export warning exercised in JSX and TSX |
+| Hooks and TypeScript | Same Next presets and plugins | Complete rule maps retained; hook-order and explicit-any regressions |
 
-- [ ] Font size detection from PDF
-- [ ] Line spacing measurement
-- [ ] Widow/orphan line detection
-- [ ] Heading placement validation
-- [ ] Table of Contents format checking
-- [ ] User accounts and history
-- [ ] Institutional licensing
+`npm run test:lint-config` compares the complete effective rule maps and 49
+diagnostic fixtures against snapshots captured with ESLint 9.39.5 before the
+upgrade. It also verifies Babel globals, JSX reference tracking, a single
+installed ESLint version, and the existing directory-glob adapter. CI runs the
+checks on both Node 22 and 24. When these plugin versions or Next change, review
+their declared peers and remove overrides once their supported ranges allow it;
+the version assertions deliberately require that review.
 
-## Deploy on Vercel
-
-The easiest way to deploy ThesisCheck is on [Vercel](https://vercel.com):
-
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/yourusername/thesis-check)
-
-## Contributing
-
-Contributions are welcome! Please feel free to submit a Pull Request.
-
-## License
-
-MIT License - see LICENSE file for details.
-
-## Disclaimer
-
-ThesisCheck provides automated formatting checks as a helpful tool. Always verify compliance with your graduate school's official guidelines before final submission.
+Newer npm versions also record approval for the pinned `unrs-resolver@1.12.2`
+postinstall script, which prepares its platform-specific native binding used by
+the TypeScript import resolver.
