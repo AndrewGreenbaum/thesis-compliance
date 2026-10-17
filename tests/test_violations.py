@@ -1,7 +1,5 @@
 """Tests for violation builders."""
 
-import pytest
-
 from thesis_compliance.checker.violations import ViolationBuilder
 from thesis_compliance.models import RuleType, Severity
 

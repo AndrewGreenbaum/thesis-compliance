@@ -1,210 +1,67 @@
 # Thesis Compliance
 
-> "Never get your thesis rejected for formatting again."
+Checks thesis PDFs for possible formatting problems: margins, fonts, spacing, headings, captions, bibliography layout, and page numbers. The Python checker works on its own; the API and browser interface are optional.
 
-A tool that detects formatting deviations in thesis PDFs by analyzing the actual rendered output, not just linting LaTeX source. Show grad students *exactly* where their document breaks from the style spec.
+This is a review aid. PDF structure is inferred, so flagged text needs a human check. The bundled university rules are snapshots, not a guarantee of current graduate-school requirements or acceptance.
 
-## Features
+## Run locally
 
-- **Margin checking** - Verify 1.5" left (binding) and 1" other margins
-- **Font validation** - Check for 12pt Times/Arial body text
-- **Line spacing** - Detect double-spacing violations
-- **Page numbers** - Validate Roman numerals for front matter, Arabic for body
-- **Title page** - Verify 2" top margin requirement
-- **Heading formatting** - Check chapter/section heading sizes, bold, and capitalization
-- **Figure/table captions** - Validate caption font size, labels, and numbering sequence
-- **Bibliography** - Check hanging indents, font size, and entry spacing
-- **Multiple university specs** - Rackham (UMich), UNC, Rice, Stanford, MIT, and more
+Use Python 3.11 or newer. From this repository:
 
-## Installation
-
-```bash
-pip install thesis-compliance
-```
-
-Or install from source:
-
-```bash
-git clone https://github.com/thesis-compliance/thesis-compliance
-cd thesis-compliance
-pip install -e ".[dev]"
-```
-
-## Quick Start
-
-### CLI Usage
-
-```bash
-# Basic check with default (Rackham) spec
-thesis-check my-thesis.pdf
-
-# Use a different university's requirements
-thesis-check my-thesis.pdf --spec unc
-
-# Check specific pages
-thesis-check my-thesis.pdf --pages 1-10,42
-
-# JSON output for CI
-thesis-check my-thesis.pdf --format json --strict
-
-# Get document info without checking
-thesis-check info my-thesis.pdf
-
-# List available specs
+```sh
+python3 -m venv .venv
+source .venv/bin/activate
+python -m pip install -e ".[dev,api]"
+thesis-check check my-thesis.pdf --spec rackham
+thesis-check check my-thesis.pdf --pages 1-10,42 --format json --strict
 thesis-check list-specs
+thesis-check info my-thesis.pdf
 ```
 
-### Python API
+`--spec` accepts a bundled name or a YAML file. The bundled YAML files are in `src/thesis_compliance/spec/builtin/`; start with one when writing a custom specification.
 
-```python
-from thesis_compliance import ThesisChecker
+Exit codes: 0 means no errors; 1 means formatting errors; 2 means warnings in strict mode; 3 means a checker failure. Command-line usage mistakes may also return 2. JSON output goes to standard output.
 
-# Check a thesis
-with ThesisChecker("my-thesis.pdf") as checker:
-    report = checker.check()
+## Browser interface
 
-    if report.passed:
-        print("All checks passed!")
-    else:
-        for violation in report.errors:
-            print(f"Page {violation.page}: {violation.message}")
+Start the API from the repository root with the virtual environment active:
+
+```sh
+uvicorn thesis_compliance.api:app --host 127.0.0.1 --port 8000
 ```
 
-### REST API
+In another terminal, with Node.js 20.9 or newer:
 
-Start the server:
-
-```bash
-pip install thesis-compliance[api]
-uvicorn thesis_compliance.api:app --host 0.0.0.0 --port 8000
+```sh
+cd web
+npm ci
+npm run dev
 ```
 
-Check a thesis:
+Open http://localhost:3000/check. The browser uses http://localhost:8000 by default; set `NEXT_PUBLIC_API_URL` before building to use another API address. Uploads are limited to 20 MiB.
 
-```bash
-curl -X POST "http://localhost:8000/check" \
-  -F "file=@my-thesis.pdf" \
-  -F "spec=rackham"
-```
+For a production frontend build, run `npm run build` and `npm start` in `web`. If hosting the API externally, configure its allowed origins and put a request-size limit at the proxy. Multipart parsing happens before the application checks file size.
 
-## Example Output
+## GitHub Actions
 
-```
-Thesis Compliance Report
+The composite action in `action.yml` installs this checkout and runs the same CLI. It writes `errors`, `warnings`, and `passed` outputs, plus `thesis-results.json` in the runner temporary directory. Checker failures remain failures; missing or malformed JSON cannot produce a passing result.
 
-Document:     my-thesis.pdf
-Spec:         rackham
-Pages checked: 142
-Rules checked: 23
+The reusable workflow in `.github/workflows/thesis-check.yml` checks out the calling repository and the checker, runs the action, and uploads the report. It currently uses the checker's `main` branch; pin that checkout to a reviewed commit for a fixed version.
 
-Errors: 2
+## Checks
 
-  ✗ Page 1: Title page top margin must be at least 2.0 inches
-    Expected: >= 2.0 inches
-    Found: 1.75 inches
-    Suggestion: Add 18pt of space before the title
-
-  ✗ Page 42: Body text must be double-spaced
-    Expected: 2.0 line spacing
-    Found: 1.80 (1.5 lines)
-    Suggestion: Check paragraph settings use "double" not "1.5 lines"
-
-Warnings: 0
-
-──────────────────────────────────────────────────
-Status: Failed - 2 error(s)
-```
-
-## Exit Codes
-
-| Code | Meaning |
-|------|---------|
-| 0 | All checks passed |
-| 1 | Errors found |
-| 2 | Warnings found (strict mode) |
-| 3 | Tool error (invalid PDF, etc.) |
-
-## Available Specs
-
-| Spec | University | Notes |
-|------|-----------|-------|
-| `rackham` | University of Michigan | Default, strictest |
-| `unc` | UNC Chapel Hill | |
-| `rice` | Rice University | |
-| `stanford` | Stanford University | |
-| `mit` | MIT | |
-| `cornell` | Cornell University | |
-| `harvard` | Harvard University | |
-| `chicago` | University of Chicago | |
-
-## Custom Specifications
-
-Create a YAML file with your requirements:
-
-```yaml
-name: my-university
-university: My University
-description: Custom thesis requirements
-
-margins:
-  left: 1.5
-  right: 1.0
-  top: 1.0
-  bottom: 1.0
-  tolerance: 0.05
-
-fonts:
-  allowed_fonts:
-    - Times New Roman
-    - Arial
-  body_size: 12.0
-
-spacing:
-  required_ratio: 2.0  # double-spaced
-  tolerance: 0.2
-
-page_numbers:
-  front_matter:
-    style: roman
-    alignment: center
-  body:
-    style: arabic
-    alignment: center
-```
-
-Use it:
-
-```bash
-thesis-check my-thesis.pdf --spec my-university.yaml
-```
-
-## How It Works
-
-Thesis Compliance uses PyMuPDF to analyze the actual rendered PDF, not just source code:
-
-1. **Margin detection** - Calculates content bounding box and measures distance from page edges
-2. **Font extraction** - Reads embedded font information and sizes from each text block
-3. **Line spacing** - Measures baseline-to-baseline distance divided by font size
-4. **Page numbers** - Detects Roman/Arabic numerals near page edges
-
-This "Software 2.0" approach catches issues that source linting misses, like font substitution or spacing from included figures.
-
-## Development
-
-```bash
-# Install dev dependencies
-pip install -e ".[dev]"
-
-# Run tests
+```sh
 pytest
-
-# Type checking
+ruff check src tests scripts
+ruff format --check src tests scripts
 mypy src
-
-# Linting
-ruff check src tests
+cd web
+npm run lint
+npm run build
+npx playwright install chromium
+npm run test:e2e
 ```
 
-## License
+The browser regressions mock API replies. API tests use temporary PDFs and mocked network responses; they do not fetch arbitrary live sites. URL downloads reject non-public destinations and check each redirect, with bounded reads and cleanup on failure.
 
-MIT
+MIT license.

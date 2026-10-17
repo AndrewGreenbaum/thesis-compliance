@@ -3,7 +3,7 @@
 import { useCallback, useState } from "react";
 
 interface FileUploadProps {
-  onFileSelect: (file: File) => void;
+  onFileSelect: (file: File | null) => void;
   disabled?: boolean;
 }
 
@@ -13,12 +13,12 @@ export default function FileUpload({ onFileSelect, disabled }: FileUploadProps) 
   const [error, setError] = useState<string | null>(null);
 
   const validateFile = (file: File): boolean => {
-    if (file.type !== "application/pdf") {
+    if (file.type !== "application/pdf" && !(file.type === "" && /\.pdf$/i.test(file.name))) {
       setError("Please upload a PDF file");
       return false;
     }
-    if (file.size > 50 * 1024 * 1024) {
-      setError("File size must be less than 50MB");
+    if (file.size > 20 * 1024 * 1024) {
+      setError("File size must be 20MB or smaller");
       return false;
     }
     setError(null);
@@ -30,6 +30,9 @@ export default function FileUpload({ onFileSelect, disabled }: FileUploadProps) 
       if (validateFile(file)) {
         setFileName(file.name);
         onFileSelect(file);
+      } else {
+        setFileName(null);
+        onFileSelect(null);
       }
     },
     [onFileSelect]
@@ -131,7 +134,7 @@ export default function FileUpload({ onFileSelect, disabled }: FileUploadProps) 
                 <span className="font-semibold">Click to upload</span> or drag
                 and drop
               </p>
-              <p className="text-xs text-gray-500">PDF files only (max 50MB)</p>
+              <p className="text-xs text-gray-500">PDF files only (max 20MB)</p>
             </>
           )}
         </div>

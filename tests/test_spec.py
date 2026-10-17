@@ -1,11 +1,10 @@
 """Tests for style specification loading."""
 
-import pytest
 import tempfile
-from pathlib import Path
 
-from thesis_compliance.spec import SpecLoader, StyleSpec
-from thesis_compliance.spec.rules import MarginRule
+import pytest
+
+from thesis_compliance.spec import SpecLoader
 
 
 class TestSpecLoader:
@@ -48,9 +47,7 @@ fonts:
     - CustomFont
   body_size: 11.0
 """
-        with tempfile.NamedTemporaryFile(
-            mode="w", suffix=".yaml", delete=False
-        ) as f:
+        with tempfile.NamedTemporaryFile(mode="w", suffix=".yaml", delete=False) as f:
             f.write(yaml_content)
             f.flush()
 

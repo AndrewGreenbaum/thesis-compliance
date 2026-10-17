@@ -22,9 +22,7 @@ class TestBibliographyExtractor:
         """Create a BibliographyExtractor instance."""
         return BibliographyExtractor(pdf_document)
 
-    def test_find_bibliography_section(
-        self, bibliography_extractor: BibliographyExtractor
-    ) -> None:
+    def test_find_bibliography_section(self, bibliography_extractor: BibliographyExtractor) -> None:
         """Test finding bibliography section in document."""
         section = bibliography_extractor.find_bibliography_section()
         # May or may not find a bibliography depending on the test PDF
@@ -33,18 +31,14 @@ class TestBibliographyExtractor:
             assert start_page >= 1
             assert end_page >= start_page
 
-    def test_get_bibliography_entries(
-        self, bibliography_extractor: BibliographyExtractor
-    ) -> None:
+    def test_get_bibliography_entries(self, bibliography_extractor: BibliographyExtractor) -> None:
         """Test getting bibliography entries."""
         entries = bibliography_extractor.get_bibliography_entries()
         assert isinstance(entries, list)
         for entry in entries:
             assert isinstance(entry, BibliographyEntry)
 
-    def test_analyze_bibliography(
-        self, bibliography_extractor: BibliographyExtractor
-    ) -> None:
+    def test_analyze_bibliography(self, bibliography_extractor: BibliographyExtractor) -> None:
         """Test analyzing bibliography section."""
         info = bibliography_extractor.analyze_bibliography()
         # May return None if no bibliography found
@@ -287,9 +281,7 @@ class TestBibliographyCompliance:
         mock.get_text_blocks.side_effect = get_blocks
         return mock
 
-    def test_hanging_indent_violation_detected(
-        self, mock_doc_with_wrong_indent: MagicMock
-    ) -> None:
+    def test_hanging_indent_violation_detected(self, mock_doc_with_wrong_indent: MagicMock) -> None:
         """Test that missing hanging indent is detected."""
         extractor = BibliographyExtractor(mock_doc_with_wrong_indent)
         compliant, issues = extractor.check_bibliography_compliance(

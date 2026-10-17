@@ -36,7 +36,7 @@ ThesisCheck is a web-based tool that validates thesis/dissertation PDF formattin
 
 ### Prerequisites
 
-- Node.js 18.x or later
+- Node.js 22 or 24
 - npm
 
 ### Installation
@@ -47,7 +47,7 @@ git clone https://github.com/yourusername/thesis-check.git
 cd thesis-check
 
 # Install dependencies
-npm install
+npm ci
 
 # Run the development server
 npm run dev
@@ -66,7 +66,7 @@ npm start
 
 - **Framework**: Next.js 16 (App Router)
 - **Styling**: Tailwind CSS
-- **PDF Processing**: pdf-lib
+- **PDF Processing**: Python API (the browser uploads PDFs for checking)
 - **Language**: TypeScript
 
 ## Project Structure

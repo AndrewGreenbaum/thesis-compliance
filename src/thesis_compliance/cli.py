@@ -1,6 +1,6 @@
 """Thesis compliance CLI using Typer."""
 
-from enum import Enum
+from enum import StrEnum
 from pathlib import Path
 from typing import Annotated
 
@@ -22,7 +22,7 @@ app = typer.Typer(
 console = Console()
 
 
-class OutputFormat(str, Enum):
+class OutputFormat(StrEnum):
     """Output format options."""
 
     CONSOLE = "console"
@@ -96,10 +96,10 @@ def check(
     - Page number format and position
 
     Examples:
-        thesis-check my-thesis.pdf
-        thesis-check my-thesis.pdf --spec stanford.yaml
-        thesis-check my-thesis.pdf --format json --strict
-        thesis-check my-thesis.pdf --pages 1-10,42
+        thesis-check check my-thesis.pdf
+        thesis-check check my-thesis.pdf --spec stanford.yaml
+        thesis-check check my-thesis.pdf --format json --strict
+        thesis-check check my-thesis.pdf --pages 1-10,42
     """
     try:
         with ThesisChecker(pdf_path, spec) as checker:

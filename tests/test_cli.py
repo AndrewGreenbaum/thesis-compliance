@@ -1,7 +1,6 @@
 """Tests for CLI commands."""
 
 from pathlib import Path
-from unittest.mock import patch
 
 import pytest
 
@@ -27,21 +26,21 @@ class TestCheckCommand:
         result = runner.invoke(app, ["check", str(valid_thesis_pdf)])
         # Exit code 0 = passed, 1 = violations found (both acceptable)
         assert result.exit_code in [0, 1]
-        assert "Compliance Report" in result.stdout or "passed" in result.stdout.lower() or "error" in result.stdout.lower()
+        assert (
+            "Compliance Report" in result.stdout
+            or "passed" in result.stdout.lower()
+            or "error" in result.stdout.lower()
+        )
 
     def test_check_with_spec(self, runner: CliRunner, valid_thesis_pdf: Path):
         """Test checking with specific spec."""
-        result = runner.invoke(
-            app, ["check", str(valid_thesis_pdf), "--spec", "rackham"]
-        )
+        result = runner.invoke(app, ["check", str(valid_thesis_pdf), "--spec", "rackham"])
         # Exit code 0 = passed, 1 = violations found (both acceptable)
         assert result.exit_code in [0, 1]
 
     def test_check_with_page_range(self, runner: CliRunner, valid_thesis_pdf: Path):
         """Test checking with page range."""
-        result = runner.invoke(
-            app, ["check", str(valid_thesis_pdf), "--pages", "1-3"]
-        )
+        result = runner.invoke(app, ["check", str(valid_thesis_pdf), "--pages", "1-3"])
         # Exit code 0 = passed, 1 = violations found (both acceptable)
         assert result.exit_code in [0, 1]
 
@@ -60,9 +59,7 @@ class TestCheckCommand:
 
     def test_check_invalid_spec(self, runner: CliRunner, valid_thesis_pdf: Path):
         """Test checking with invalid spec."""
-        result = runner.invoke(
-            app, ["check", str(valid_thesis_pdf), "--spec", "nonexistent"]
-        )
+        result = runner.invoke(app, ["check", str(valid_thesis_pdf), "--spec", "nonexistent"])
         assert result.exit_code != 0
 
 
@@ -99,13 +96,12 @@ class TestOutputFormats:
 
     def test_json_output(self, runner: CliRunner, valid_thesis_pdf: Path):
         """Test JSON output format."""
-        result = runner.invoke(
-            app, ["check", str(valid_thesis_pdf), "--format", "json"]
-        )
+        result = runner.invoke(app, ["check", str(valid_thesis_pdf), "--format", "json"])
         # Exit code 0 = passed, 1 = violations found (both acceptable)
         assert result.exit_code in [0, 1]
         # Should be valid JSON
         import json
+
         try:
             data = json.loads(result.stdout)
             assert "passed" in data or "violations" in data
@@ -115,9 +111,7 @@ class TestOutputFormats:
 
     def test_brief_output(self, runner: CliRunner, valid_thesis_pdf: Path):
         """Test brief output format."""
-        result = runner.invoke(
-            app, ["check", str(valid_thesis_pdf), "--format", "brief"]
-        )
+        result = runner.invoke(app, ["check", str(valid_thesis_pdf), "--format", "brief"])
         # Exit code 0 = passed, 1 = violations found (both acceptable)
         assert result.exit_code in [0, 1]
         # Brief output should be shorter
@@ -139,17 +133,13 @@ class TestCLIEdgeCases:
 
     def test_invalid_page_range(self, runner: CliRunner, valid_thesis_pdf: Path):
         """Test with invalid page range."""
-        result = runner.invoke(
-            app, ["check", str(valid_thesis_pdf), "--pages", "100-200"]
-        )
+        result = runner.invoke(app, ["check", str(valid_thesis_pdf), "--pages", "100-200"])
         # Should fail due to invalid page range
         assert result.exit_code != 0
 
     def test_reversed_page_range(self, runner: CliRunner, valid_thesis_pdf: Path):
         """Test with reversed page range (start > end)."""
-        result = runner.invoke(
-            app, ["check", str(valid_thesis_pdf), "--pages", "5-1"]
-        )
+        result = runner.invoke(app, ["check", str(valid_thesis_pdf), "--pages", "5-1"])
         # Should fail due to reversed range
         assert result.exit_code != 0
 

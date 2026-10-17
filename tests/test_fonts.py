@@ -84,9 +84,7 @@ class TestFontExtractor:
 
     def test_find_font_size_violations_with_max(self, font_extractor: FontExtractor):
         """Test finding font size violations with max size."""
-        violations = font_extractor.find_font_size_violations(
-            min_size=8.0, max_size=20.0
-        )
+        violations = font_extractor.find_font_size_violations(min_size=8.0, max_size=20.0)
         assert isinstance(violations, dict)
 
     def test_empty_document_font_usage(self, empty_pdf: Path):

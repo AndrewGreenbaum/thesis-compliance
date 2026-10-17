@@ -1,7 +1,6 @@
 """Tests for FastAPI endpoints."""
 
 from pathlib import Path
-from unittest.mock import patch
 
 import pytest
 
@@ -10,7 +9,7 @@ pytest.importorskip("fastapi")
 
 from fastapi.testclient import TestClient
 
-from thesis_compliance.api import app, _validate_url
+from thesis_compliance.api import _validate_url, app
 
 
 @pytest.fixture
@@ -171,10 +170,10 @@ class TestCORSConfiguration:
         """Test that CORS headers are present."""
         response = client.options(
             "/health",
-            headers={"Origin": "http://localhost:3000"},
+            headers={"Origin": "http://localhost:3000", "Access-Control-Request-Method": "GET"},
         )
-        # Should allow the configured origin
-        # Note: actual headers depend on FastAPI CORS middleware behavior
+        assert response.status_code == 200
+        assert response.headers["access-control-allow-origin"] == "http://localhost:3000"
 
 
 class TestAPIEdgeCases:

@@ -45,9 +45,7 @@ class TestSpacingExtractor:
         """Test double spacing check on valid document."""
         with PDFDocument(valid_thesis_pdf) as doc:
             extractor = SpacingExtractor(doc)
-            compliant, violations = extractor.check_double_spacing(
-                pages=[2, 3, 4], tolerance=0.3
-            )
+            compliant, violations = extractor.check_double_spacing(pages=[2, 3, 4], tolerance=0.3)
             # Valid thesis should be mostly double-spaced
             assert isinstance(compliant, bool)
             assert isinstance(violations, list)
@@ -99,13 +97,9 @@ class TestSpacingExtractor:
     def test_spacing_tolerance(self, spacing_extractor: SpacingExtractor):
         """Test that tolerance affects spacing compliance."""
         # Strict tolerance
-        _, violations_strict = spacing_extractor.check_double_spacing(
-            pages=[2], tolerance=0.1
-        )
+        _, violations_strict = spacing_extractor.check_double_spacing(pages=[2], tolerance=0.1)
         # Loose tolerance
-        _, violations_loose = spacing_extractor.check_double_spacing(
-            pages=[2], tolerance=0.5
-        )
+        _, violations_loose = spacing_extractor.check_double_spacing(pages=[2], tolerance=0.5)
         # Loose tolerance should have same or fewer violations
         assert len(violations_loose) <= len(violations_strict)
 
