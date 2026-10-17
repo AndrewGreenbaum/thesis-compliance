@@ -1,0 +1,235 @@
+{
+  "source": "fast-glob@3.3.1",
+  "options": {
+    "onlyDirectories": true
+  },
+  "cases": [
+    {
+      "pattern": ".",
+      "expected": [
+        "."
+      ]
+    },
+    {
+      "pattern": "./",
+      "expected": [
+        "./"
+      ]
+    },
+    {
+      "pattern": "apps/one",
+      "expected": [
+        "apps/one"
+      ]
+    },
+    {
+      "pattern": "apps/one/",
+      "expected": [
+        "apps/one/"
+      ]
+    },
+    {
+      "pattern": "./apps/one",
+      "expected": [
+        "./apps/one"
+      ]
+    },
+    {
+      "pattern": "./apps/*",
+      "expected": [
+        "./apps/01",
+        "./apps/02",
+        "./apps/03",
+        "./apps/one",
+        "./apps/two"
+      ]
+    },
+    {
+      "pattern": "apps/*",
+      "expected": [
+        "apps/01",
+        "apps/02",
+        "apps/03",
+        "apps/one",
+        "apps/two"
+      ]
+    },
+    {
+      "pattern": "apps/{one,two}",
+      "expected": [
+        "apps/one",
+        "apps/two"
+      ]
+    },
+    {
+      "pattern": "apps/!(two)",
+      "expected": [
+        "apps/.hidden",
+        "apps/01",
+        "apps/02",
+        "apps/03",
+        "apps/one"
+      ]
+    },
+    {
+      "pattern": "apps/*/app",
+      "expected": [
+        "apps/one/app"
+      ]
+    },
+    {
+      "pattern": "apps/**",
+      "expected": [
+        "apps/01",
+        "apps/01/pages",
+        "apps/02",
+        "apps/02/pages",
+        "apps/03",
+        "apps/03/pages",
+        "apps/one",
+        "apps/one/app",
+        "apps/one/app/blog",
+        "apps/one/pages",
+        "apps/two",
+        "apps/two/src",
+        "apps/two/src/app"
+      ]
+    },
+    {
+      "pattern": "apps/**/",
+      "expected": [
+        "apps/01",
+        "apps/01/pages",
+        "apps/02",
+        "apps/02/pages",
+        "apps/03",
+        "apps/03/pages",
+        "apps/one",
+        "apps/one/app",
+        "apps/one/app/blog",
+        "apps/one/pages",
+        "apps/two",
+        "apps/two/src",
+        "apps/two/src/app"
+      ]
+    },
+    {
+      "pattern": "apps/**/pages",
+      "expected": [
+        "apps/01/pages",
+        "apps/02/pages",
+        "apps/03/pages",
+        "apps/one/pages"
+      ]
+    },
+    {
+      "pattern": "apps/{one,two}/**",
+      "expected": [
+        "apps/one/app",
+        "apps/one/app/blog",
+        "apps/one/pages",
+        "apps/two/src",
+        "apps/two/src/app"
+      ]
+    },
+    {
+      "pattern": "apps/one/**/**",
+      "expected": [
+        "apps/one/app",
+        "apps/one/app/blog",
+        "apps/one/pages"
+      ]
+    },
+    {
+      "pattern": "**/pages",
+      "expected": [
+        "apps/01/pages",
+        "apps/02/pages",
+        "apps/03/pages",
+        "apps/one/pages",
+        "packages/web/pages",
+        "space dir/pages"
+      ]
+    },
+    {
+      "pattern": "missing",
+      "expected": []
+    },
+    {
+      "pattern": "apps/regular-file",
+      "expected": []
+    },
+    {
+      "pattern": "space dir",
+      "expected": [
+        "space dir"
+      ]
+    },
+    {
+      "pattern": "space dir/*",
+      "expected": [
+        "space dir/pages"
+      ]
+    },
+    {
+      "pattern": "<ROOT>/apps/*",
+      "expected": [
+        "<ROOT>/apps/01",
+        "<ROOT>/apps/02",
+        "<ROOT>/apps/03",
+        "<ROOT>/apps/one",
+        "<ROOT>/apps/two"
+      ]
+    },
+    {
+      "pattern": "<ROOT>/apps/one",
+      "expected": [
+        "<ROOT>/apps/one"
+      ]
+    },
+    {
+      "pattern": "apps/.hidden",
+      "expected": [
+        "apps/.hidden"
+      ]
+    },
+    {
+      "pattern": "apps/.*",
+      "expected": [
+        "apps/.hidden"
+      ]
+    },
+    {
+      "pattern": "!apps/one",
+      "expected": []
+    },
+    {
+      "pattern": "{apps/one,packages/web}",
+      "expected": [
+        "apps/one",
+        "packages/web"
+      ]
+    },
+    {
+      "pattern": "[ap]*/one",
+      "expected": [
+        "apps/one"
+      ]
+    },
+    {
+      "pattern": "apps/???",
+      "expected": [
+        "apps/one",
+        "apps/two"
+      ]
+    },
+    {
+      "pattern": "apps/{01..03}",
+      "expected": [
+        "apps/01",
+        "apps/02",
+        "apps/03"
+      ]
+    }
+  ]
+}
