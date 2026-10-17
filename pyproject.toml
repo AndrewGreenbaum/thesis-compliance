@@ -54,9 +54,9 @@ dev = [
 thesis-check = "thesis_compliance.cli:app"
 
 [project.urls]
-Homepage = "https://github.com/AndrewGreenbaum/thesis-compliance"
-Documentation = "https://github.com/AndrewGreenbaum/thesis-compliance#readme"
-Issues = "https://github.com/AndrewGreenbaum/thesis-compliance/issues"
+Homepage = "https://github.com/AndrewGreenbaum/thesis-pdf-format-checker"
+Documentation = "https://github.com/AndrewGreenbaum/thesis-pdf-format-checker#readme"
+Issues = "https://github.com/AndrewGreenbaum/thesis-pdf-format-checker/issues"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/thesis_compliance"]

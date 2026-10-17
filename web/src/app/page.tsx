@@ -6,7 +6,7 @@ export default function Home() {
       {/* Navigation */}
       <nav className="bg-white/80 backdrop-blur-sm border-b border-gray-100 sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
+          <div className="flex flex-wrap justify-between items-center gap-3 min-h-16 py-3">
             <div className="flex items-center space-x-2">
               <svg
                 className="h-8 w-8 text-blue-600"
@@ -22,7 +22,7 @@ export default function Home() {
                 />
               </svg>
               <span className="text-xl font-bold text-gray-900">
-                ThesisCheck
+                Thesis PDF Format Checker
               </span>
             </div>
             <Link
@@ -165,7 +165,7 @@ export default function Home() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-3xl font-bold text-gray-900">
-              How ThesisCheck Works
+              How Thesis PDF Format Checker Works
             </h2>
             <p className="mt-4 text-lg text-gray-600">
               Three simple steps to formatting confidence
@@ -360,7 +360,7 @@ export default function Home() {
                   d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
                 />
               </svg>
-              <span className="text-xl font-bold text-white">ThesisCheck</span>
+              <span className="text-xl font-bold text-white">Thesis PDF Format Checker</span>
             </div>
             <p className="text-sm">
               Built for graduate students, by graduate students.

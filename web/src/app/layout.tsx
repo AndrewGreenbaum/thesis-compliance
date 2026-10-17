@@ -13,7 +13,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "ThesisCheck - Thesis Formatting Validator",
+  title: "Thesis PDF Format Checker",
   description:
     "Instantly validate your thesis or dissertation formatting against university requirements. Never get rejected for formatting again.",
   keywords: [

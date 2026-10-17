@@ -2,12 +2,12 @@
 #
 # Usage in your workflow:
 #
-# - uses: AndrewGreenbaum/thesis-compliance@v1
+# - uses: AndrewGreenbaum/thesis-pdf-format-checker@main
 #   with:
 #     pdf-path: thesis.pdf
 #     spec: rackham
 
-name: 'Thesis Compliance Check'
+name: 'Thesis PDF Format Checker'
 description: 'Check thesis PDF formatting against university style requirements'
 author: 'Andrew Greenbaum'
 

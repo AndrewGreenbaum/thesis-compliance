@@ -1,4 +1,4 @@
-# Thesis Compliance
+# Thesis PDF Format Checker
 
 Checks thesis PDFs for possible formatting problems: margins, fonts, spacing, headings, captions, bibliography layout, and page numbers. The Python checker works on its own; the API and browser interface are optional.
 
@@ -47,6 +47,17 @@ For a production frontend build, run `npm run build` and `npm start` in `web`. I
 The composite action in `action.yml` installs this checkout and runs the same CLI. It writes `errors`, `warnings`, and `passed` outputs, plus `thesis-results.json` in the runner temporary directory. Checker failures remain failures; missing or malformed JSON cannot produce a passing result.
 
 The reusable workflow in `.github/workflows/thesis-check.yml` checks out the calling repository and the checker, runs the action, and uploads the report. It currently uses the checker's `main` branch; pin that checkout to a reviewed commit for a fixed version.
+
+Use `AndrewGreenbaum/thesis-pdf-format-checker@main` for the composite action or
+`AndrewGreenbaum/thesis-pdf-format-checker/.github/workflows/thesis-check.yml@main`
+for the reusable workflow. Replace `main` with a reviewed commit SHA to pin a
+version. This repository has no published release tags.
+
+If your workflow previously used `AndrewGreenbaum/thesis-compliance`, change its
+`uses:` reference to the new repository path. GitHub does not redirect action
+references when a repository is renamed. The Python package is still
+`thesis-compliance`, its import is still `thesis_compliance`, and the command is
+still `thesis-check`.
 
 ## Checks
 

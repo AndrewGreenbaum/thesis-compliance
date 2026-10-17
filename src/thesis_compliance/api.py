@@ -27,7 +27,7 @@ from thesis_compliance.spec import SpecLoader, StyleSpec
 logger = logging.getLogger(__name__)
 
 app = FastAPI(
-    title="Thesis Compliance API",
+    title="Thesis PDF Format Checker API",
     description="Check thesis PDF formatting compliance against university style requirements",
     version=__version__,
 )

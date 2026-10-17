@@ -1,4 +1,4 @@
-# ThesisCheck frontend
+# Thesis PDF Format Checker frontend
 
 A Next.js interface for the Python thesis-formatting checker. It loads the
 available university specifications from the API, uploads a PDF, and displays
@@ -13,8 +13,8 @@ Use Python 3.11 or newer, Node.js 22.13+ or 24, and npm. Start the API from the
 repository root:
 
 ```sh
-git clone https://github.com/AndrewGreenbaum/thesis-compliance.git
-cd thesis-compliance
+git clone https://github.com/AndrewGreenbaum/thesis-pdf-format-checker.git
+cd thesis-pdf-format-checker
 python3 -m venv .venv
 source .venv/bin/activate
 python -m pip install -e ".[api]"

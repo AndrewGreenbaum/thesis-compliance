@@ -1,5 +1,5 @@
 """
-Thesis Compliance - Detect formatting deviations in thesis PDFs.
+Thesis PDF Format Checker - Detect formatting deviations in thesis PDFs.
 """
 
 __version__ = "0.1.0"

@@ -137,7 +137,7 @@ export default function CheckPage() {
       {/* Navigation */}
       <nav className="bg-white border-b border-gray-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
+          <div className="flex flex-wrap justify-between items-center gap-3 min-h-16 py-3">
             <Link href="/" className="flex items-center space-x-2">
               <svg
                 className="h-8 w-8 text-blue-600"
@@ -153,7 +153,7 @@ export default function CheckPage() {
                 />
               </svg>
               <span className="text-xl font-bold text-gray-900">
-                ThesisCheck
+                Thesis PDF Format Checker
               </span>
             </Link>
             {step !== "upload" && (
@@ -337,7 +337,7 @@ export default function CheckPage() {
       <footer className="border-t border-gray-200 bg-white py-8 mt-12">
         <div className="max-w-4xl mx-auto px-4 text-center text-sm text-gray-500">
           <p>
-            ThesisCheck analyzes your PDF against known university formatting
+            Thesis PDF Format Checker analyzes your PDF against known university formatting
             requirements. Always verify with your graduate school&apos;s official
             guidelines.
           </p>

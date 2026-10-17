@@ -7,12 +7,12 @@
 # on: [push, pull_request]
 # jobs:
 #   check:
-#     uses: AndrewGreenbaum/thesis-compliance/.github/workflows/thesis-check.yml@main
+#     uses: AndrewGreenbaum/thesis-pdf-format-checker/.github/workflows/thesis-check.yml@main
 #     with:
 #       pdf-path: thesis.pdf
 #       spec: rackham
 
-name: Thesis Compliance Check
+name: Thesis PDF Format Checker
 
 on:
   workflow_call:
@@ -57,7 +57,7 @@ jobs:
       - name: Checkout checker source
         uses: actions/checkout@v4
         with:
-          repository: AndrewGreenbaum/thesis-compliance
+          repository: AndrewGreenbaum/thesis-pdf-format-checker
           ref: main
           path: .thesis-checker
 

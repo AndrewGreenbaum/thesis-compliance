@@ -39,7 +39,7 @@ class ConsoleReporter:
 
     def _print_header(self, report: ComplianceReport) -> None:
         """Print report header."""
-        title = Text("Thesis Compliance Report", style="bold blue")
+        title = Text("Thesis PDF Format Report", style="bold blue")
         self.console.print()
         self.console.print(Panel(title, expand=False))
         self.console.print()
