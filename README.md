@@ -77,3 +77,7 @@ npm run test:e2e
 The browser tests mock API replies; API tests use temporary PDFs and mocked downloads. Test an actual thesis against its graduate-school guidelines before relying on a report.
 
 MIT license.
+
+## Commit dates
+
+Some development commit dates are approximate reconstructions of batched checkpoints within the project’s recorded date range. They do not identify individual work sessions. Later security and documentation fixes keep their recorded dates.
