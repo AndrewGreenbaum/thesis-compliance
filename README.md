@@ -44,7 +44,7 @@ For a production frontend build, run `npm run build` and `npm start` in `web`. I
 
 ## GitHub Actions
 
-The composite action in `action.yml` installs this checkout and runs the same CLI. It writes `errors`, `warnings`, and `passed` outputs, plus `thesis-results.json` in the runner temporary directory. Checker failures remain failures; missing or malformed JSON cannot produce a passing result.
+The composite action in `action.yml` installs this checkout and runs the same CLI. It writes `errors`, `warnings`, and `passed` outputs, plus `thesis-results.json` in the runner temporary directory.
 
 The reusable workflow in `.github/workflows/thesis-check.yml` checks out the calling repository and the checker, runs the action, and uploads the report. It currently uses the checker's `main` branch; pin that checkout to a reviewed commit for a fixed version.
 
@@ -74,6 +74,6 @@ npx playwright install chromium
 npm run test:e2e
 ```
 
-The browser regressions mock API replies. API tests use temporary PDFs and mocked network responses; they do not fetch arbitrary live sites. URL downloads reject non-public destinations and check each redirect, with bounded reads and cleanup on failure.
+The browser tests mock API replies; API tests use temporary PDFs and mocked downloads. Test an actual thesis against its graduate-school guidelines before relying on a report.
 
 MIT license.
